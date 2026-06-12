@@ -2489,6 +2489,26 @@ a:hover { color: var(--clr-accent-light); }
     grid-template-columns: 1fr;
   }
 
+  .level-card {
+    padding: var(--sp-md) !important;
+    gap: var(--sp-sm) !important;
+  }
+  .level-icon {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.25rem !important;
+  }
+  .level-title {
+    font-size: 0.95rem !important;
+  }
+  .level-desc {
+    font-size: 0.75rem !important;
+    margin-bottom: 4px !important;
+  }
+  .stars .star {
+    font-size: 0.8rem !important;
+  }
+
   #quiz-options {
     grid-template-columns: 1fr;
   }
