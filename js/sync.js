@@ -84,7 +84,8 @@ const SyncManager = {
     const progressData = {
       action: 'syncProgress',
       nis: nis,
-      levelId: levelId,
+      level: levelId,     // For server (Code.gs)
+      levelId: levelId,   // Keep just in case client needs it
       phase: phase,
       score: Math.max(0, Math.min(100, Math.round(score))),
       stars: Math.max(0, Math.min(3, Math.round(stars))),
@@ -208,54 +209,112 @@ const SyncManager = {
     }
 
     const merged = JSON.parse(JSON.stringify(localData));
+    if (!merged.levels) {
+      merged.levels = {};
+    }
 
-    // cloudData expected format: { levels: { "1": { learn: {...}, quiz: {...}, simulation: {...} }, ... } }
-    if (cloudData && cloudData.levels) {
-      const cloudLevels = cloudData.levels;
-
-      for (const levelId in cloudLevels) {
-        if (!cloudLevels.hasOwnProperty(levelId)) continue;
-
-        if (!merged[levelId]) {
-          merged[levelId] = {};
-        }
-
-        const cloudLevel = cloudLevels[levelId];
-
-        for (const phase in cloudLevel) {
-          if (!cloudLevel.hasOwnProperty(phase)) continue;
-
-          const cloudPhase = cloudLevel[phase];
-          const localPhase = merged[levelId][phase];
-
-          if (!localPhase) {
-            // No local data for this phase — use cloud
-            merged[levelId][phase] = cloudPhase;
-          } else {
-            // Merge: keep the higher score/stars/xp
-            merged[levelId][phase] = {
-              score: Math.max(localPhase.score || 0, cloudPhase.score || 0),
-              stars: Math.max(localPhase.stars || 0, cloudPhase.stars || 0),
-              xp: Math.max(localPhase.xp || 0, cloudPhase.xp || 0),
-              completed: (localPhase.completed || false) || (cloudPhase.completed || false),
-              timestamp: (localPhase.timestamp && cloudPhase.timestamp)
-                ? (localPhase.timestamp > cloudPhase.timestamp ? localPhase.timestamp : cloudPhase.timestamp)
-                : (localPhase.timestamp || cloudPhase.timestamp || new Date().toISOString())
-            };
+    // Normalize cloudData into an array of score entries
+    let cloudScores = [];
+    if (cloudData) {
+      if (Array.isArray(cloudData.scores)) {
+        cloudScores = cloudData.scores;
+      } else if (cloudData.levels) {
+        for (const levelId in cloudData.levels) {
+          const phases = cloudData.levels[levelId];
+          for (const phase in phases) {
+            cloudScores.push({
+              level: levelId,
+              phase: phase,
+              score: phases[phase].score || 0,
+              stars: phases[phase].stars || 0,
+              xp: phases[phase].xp || 0,
+              timestamp: phases[phase].timestamp
+            });
           }
         }
       }
     }
 
-    // Update local ProgressManager with merged data
-    if (typeof ProgressManager !== 'undefined' && ProgressManager) {
-      if (typeof ProgressManager.setAllProgress === 'function') {
-        ProgressManager.setAllProgress(merged);
-      } else if (typeof ProgressManager._data !== 'undefined') {
-        ProgressManager._data = merged;
-        if (typeof ProgressManager.save === 'function') {
-          ProgressManager.save();
+    // Merge each score entry into merged.levels
+    cloudScores.forEach(entry => {
+      const levelId = parseInt(entry.level, 10);
+      if (isNaN(levelId) || levelId < 1 || levelId > 6) return;
+
+      if (!merged.levels[levelId]) {
+        merged.levels[levelId] = {
+          unlocked: levelId === 1,
+          learnCompleted: false,
+          simCompleted: false,
+          quizCompleted: false,
+          bestScore: 0,
+          stars: 0
+        };
+      }
+
+      const lvl = merged.levels[levelId];
+      const phase = (entry.phase || '').toLowerCase().trim();
+
+      if (phase === 'learn') {
+        lvl.learnCompleted = true;
+      } else if (phase === 'simulate' || phase === 'simulation') {
+        lvl.simCompleted = true;
+        // Keep the highest simulation score if applicable
+        if (entry.score > (lvl.bestScore || 0) && !lvl.quizCompleted) {
+          lvl.bestScore = entry.score;
         }
+      } else if (phase === 'quiz') {
+        lvl.quizCompleted = true;
+        lvl.stars = Math.max(lvl.stars || 0, entry.stars || 0);
+        lvl.bestScore = Math.max(lvl.bestScore || 0, entry.score || 0);
+      }
+    });
+
+    // Auto-unlock logic based on progression rules
+    // Level 1 is always unlocked
+    if (merged.levels[1]) {
+      merged.levels[1].unlocked = true;
+    }
+
+    // Levels 2 to 5: unlocked if the previous level has quiz completed and stars >= 1
+    for (let i = 2; i <= 5; i++) {
+      const prevLvl = merged.levels[i - 1];
+      if (prevLvl && prevLvl.quizCompleted && prevLvl.stars >= 1) {
+        if (merged.levels[i]) {
+          merged.levels[i].unlocked = true;
+        }
+      }
+    }
+
+    // Level 6: unlocked if levels 1 to 5 all have stars >= 1
+    let lvl6Unlockable = true;
+    for (let i = 1; i <= 5; i++) {
+      const lvl = merged.levels[i];
+      if (!lvl || lvl.stars < 1) {
+        lvl6Unlockable = false;
+        break;
+      }
+    }
+    if (lvl6Unlockable && merged.levels[6]) {
+      merged.levels[6].unlocked = true;
+    }
+
+    // Update total XP to be at least the total XP from the cloud
+    let cloudTotalXp = 0;
+    if (cloudData && cloudData.summary && typeof cloudData.summary.totalXP === 'number') {
+      cloudTotalXp = cloudData.summary.totalXP;
+    } else {
+      cloudScores.forEach(s => cloudTotalXp += (s.xp || 0));
+    }
+    merged.totalXP = Math.max(merged.totalXP || 0, cloudTotalXp);
+
+    // Save back to local ProgressManager
+    if (typeof ProgressManager !== 'undefined' && ProgressManager) {
+      ProgressManager._data = merged;
+      if (typeof ProgressManager.save === 'function') {
+        ProgressManager.save();
+      }
+      if (typeof ProgressManager.checkAchievements === 'function') {
+        ProgressManager.checkAchievements();
       }
     }
 
@@ -337,6 +396,10 @@ const SyncManager = {
 
     for (let i = 0; i < itemsToSync.length; i++) {
       const item = itemsToSync[i];
+      // Ensure level key exists for older offline queued items
+      if (item.levelId && !item.level) {
+        item.level = item.levelId;
+      }
 
       try {
         const url = apiUrl + '?action=syncProgress';
