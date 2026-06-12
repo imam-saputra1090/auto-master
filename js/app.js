@@ -664,6 +664,185 @@ const App = {
         <button id="btn-header-logout" class="btn-action btn-action-danger" type="button" title="Keluar">🚪 Keluar</button>
       </div>
     `;
+
+    // Update the dynamic class ranking banner
+    this.updateRankingBanner();
+  },
+
+  /**
+   * Memperbarui banner peringkat kelas di menu utama.
+   */
+  async updateRankingBanner() {
+    const bannerEl = document.getElementById('ranking-banner');
+    if (!bannerEl) return;
+
+    // Default state if user is not logged in
+    if (typeof AuthManager === 'undefined' || !AuthManager.isLoggedIn()) {
+      bannerEl.style.display = 'none';
+      return;
+    }
+
+    const session = AuthManager.getSession();
+    const currentNis = session ? session.nis : null;
+
+    if (!currentNis) {
+      bannerEl.style.display = 'none';
+      return;
+    }
+
+    // If offline
+    if (!navigator.onLine) {
+      bannerEl.style.display = 'flex';
+      bannerEl.className = 'ranking-banner-container';
+      bannerEl.innerHTML = `
+        <div class="ranking-banner-content">
+          <div class="ranking-banner-icon">📡</div>
+          <div class="ranking-banner-info">
+            <div class="ranking-banner-title">Mode Offline</div>
+            <div class="ranking-banner-desc">Hubungkan internet untuk melihat peringkat kelas secara live.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // If API is not configured
+    if (typeof SyncManager === 'undefined' || !SyncManager._getApiUrl()) {
+      bannerEl.style.display = 'flex';
+      bannerEl.className = 'ranking-banner-container';
+      bannerEl.innerHTML = `
+        <div class="ranking-banner-content">
+          <div class="ranking-banner-icon">🔒</div>
+          <div class="ranking-banner-info">
+            <div class="ranking-banner-title">Koneksi Database Belum Aktif</div>
+            <div class="ranking-banner-desc">API URL Google Sheets belum diatur di menu Pengaturan.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      // Show loading skeleton inside banner
+      bannerEl.style.display = 'flex';
+      bannerEl.className = 'ranking-banner-container';
+      bannerEl.innerHTML = `
+        <div class="ranking-banner-content" style="width: 100%; justify-content: center; padding: 10px 0;">
+          <div class="ranking-banner-icon" style="font-size: 1.5rem; margin-right: 8px; animation: spin 1s linear infinite;">🔄</div>
+          <div class="ranking-banner-info">
+            <div class="ranking-banner-title" style="font-size: 0.95rem; font-weight: 500;">Menghubungkan ke Google Sheets...</div>
+          </div>
+        </div>
+      `;
+
+      // Fetch leaderboard from SyncManager
+      const res = await SyncManager.getLeaderboard('all');
+      
+      if (res.success && res.data && Array.isArray(res.data.entries) && res.data.entries.length > 0) {
+        const entries = res.data.entries;
+        const totalStudents = entries.length;
+        
+        // Find player index
+        const playerIndex = entries.findIndex(player => String(player.nis) === String(currentNis));
+        
+        if (playerIndex !== -1) {
+          const rank = playerIndex + 1;
+          
+          let emoji = '🏅';
+          let rankClass = '';
+          let motivationText = '';
+          
+          if (rank === 1) {
+            emoji = '🏆';
+            rankClass = 'rank-1';
+            motivationText = 'Luar biasa! Anda adalah Juara 1 di kelas! Pertahankan prestasimu! 🥇';
+          } else if (rank === 2) {
+            emoji = '🥈';
+            rankClass = 'rank-2';
+            motivationText = 'Keren sekali! Anda menempati peringkat 2 kelas! Kejar peringkat 1! 🚀';
+          } else if (rank === 3) {
+            emoji = '🥉';
+            rankClass = 'rank-3';
+            motivationText = 'Hebat! Anda berada di peringkat 3 kelas! Tingkatkan kemampuanmu! 🛠️';
+          } else {
+            emoji = '🏅';
+            rankClass = '';
+            if (rank <= 10) {
+              motivationText = `Mantap! Anda masuk Top 10 besar kelas (Peringkat ${rank} dari ${totalStudents} siswa). 🌟`;
+            } else {
+              motivationText = `Peringkat ${rank} dari ${totalStudents} siswa. Terus kumpulkan XP untuk naik peringkat! 💪`;
+            }
+          }
+          
+          bannerEl.className = `ranking-banner-container ${rankClass}`;
+          bannerEl.innerHTML = `
+            <div class="ranking-banner-content">
+              <div class="ranking-banner-icon">${emoji}</div>
+              <div class="ranking-banner-info">
+                <div class="ranking-banner-title">Peringkat Kelas: Ke-${rank} dari ${totalStudents} Siswa</div>
+                <div class="ranking-banner-desc">${motivationText}</div>
+              </div>
+            </div>
+            <div class="ranking-banner-action">
+              <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🏆 Papan Skor</button>
+            </div>
+          `;
+          
+          // Bind click event to the newly rendered button
+          const btn = document.getElementById('btn-banner-leaderboard');
+          if (btn) {
+            btn.addEventListener('click', () => {
+              this.showScreen('scores');
+            });
+          }
+        } else {
+          // Player is logged in but has no scores/XP synced yet (or not in leaderboard)
+          bannerEl.innerHTML = `
+            <div class="ranking-banner-content">
+              <div class="ranking-banner-icon">🎯</div>
+              <div class="ranking-banner-info">
+                <div class="ranking-banner-title">Belum Masuk Peringkat</div>
+                <div class="ranking-banner-desc">Selesaikan materi kuis di menu "Peta Bengkel" untuk mencatatkan nilai Anda!</div>
+              </div>
+            </div>
+            <div class="ranking-banner-action">
+              <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🗺️ Mulai Ujian</button>
+            </div>
+          `;
+          
+          const btn = document.getElementById('btn-banner-leaderboard');
+          if (btn) {
+            btn.addEventListener('click', () => {
+              this.showScreen('map');
+            });
+          }
+        }
+      } else {
+        // No leaderboard entries in server yet
+        bannerEl.innerHTML = `
+          <div class="ranking-banner-content">
+            <div class="ranking-banner-icon">🏁</div>
+            <div class="ranking-banner-info">
+              <div class="ranking-banner-title">Mulai Kompetisi Kelas!</div>
+              <div class="ranking-banner-desc">Belum ada siswa yang menyinkronkan nilai. Jadilah yang pertama di papan peringkat!</div>
+            </div>
+          </div>
+          <div class="ranking-banner-action">
+            <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🗺️ Mulai Belajar</button>
+          </div>
+        `;
+        
+        const btn = document.getElementById('btn-banner-leaderboard');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            this.showScreen('map');
+          });
+        }
+      }
+    } catch (err) {
+      console.error('[App] Error rendering ranking banner:', err);
+      bannerEl.style.display = 'none';
+    }
   },
 
   // ════════════════════════════════════════════════════════════
