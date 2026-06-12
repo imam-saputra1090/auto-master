@@ -35,8 +35,27 @@ const GAME_DATA = {
 
       // -----------------------------------------------------------------
       // LEARNING SLIDES
-      // -----------------------------------------------------------------
-      learning: [
+      // ---------------------------------------------------------      learning: [
+        {
+          title: "K3 & Alat Pelindung Diri (APD)",
+          content: "<h3>Prinsip Keselamatan dan Kesehatan Kerja (K3)</h3><p>Keselamatan dan Kesehatan Kerja (K3) adalah prioritas nomor satu di bengkel otomotif. Tujuannya adalah melindungi diri dari kecelakaan kerja dan menjaga kesehatan lingkungan kerja.</p><h3>Alat Pelindung Diri (APD) Wajib</h3><ul><li><strong>Pakaian Kerja (Wearpack)</strong> — melindungi tubuh dari kotoran, percikan api, dan gesekan benda tajam.</li><li><strong>Sepatu Safety (Safety Shoes)</strong> — memiliki pelindung besi di ujung untuk melindungi kaki dari kejatuhan alat berat dan mencegah terpeleset oleh oli.</li><li><strong>Kacamata Pelindung (Safety Glasses)</strong> — melindungi mata dari percikan cairan kimia, debu rem, atau gram besi.</li><li><strong>Sarung Tangan</strong> — melindungi tangan dari suhu panas atau zat kimia korosif (minyak rem/asam baterai).</li><li><strong>Masker</strong> — menyaring debu rem atau gas CO beracun.</li></ul><h3>Potensi Bahaya di Bengkel</h3><ul><li><strong>Kebakaran</strong> — akibat hubungan pendek sirkuit kelistrikan atau tumpahan BBM dekat percikan api.</li><li><strong>Luka Bakar</strong> — dari knalpot panas, cairan pendingin radiator panas, atau percikan las.</li><li><strong>Keracunan Gas</strong> — gas buang mesin (karbon monoksida) di area tertutup.</li><li><strong>Cedera Fisik</strong> — kejatuhan benda berat atau tergelincir tumpahan oli.</li></ul>",
+          keyPoints: [
+            "K3 bertujuan mencegah kecelakaan dan melindungi kesehatan di tempat kerja",
+            "APD wajib: Wearpack, Sepatu Safety, Kacamata Pelindung, Sarung Tangan, dan Masker",
+            "Potensi bahaya utama: Kebakaran, luka bakar, gas beracun, dan tergelincir"
+          ],
+          animation: "safety-apd"
+        },
+        {
+          title: "Budaya Kerja & Prosedur Darurat",
+          content: "<h3>Budaya Kerja Otomotif (5S / 5R)</h3><p>Budaya kerja di bengkel otomotif menerapkan prinsip <strong>5S / 5R (Seiri/Ringkas, Seiton/Rapi, Seiso/Resik, Seiketsu/Rawat, Shitsuke/Rajin)</strong>:</p><ul><li><strong>Ringkas & Rapi</strong> — pisahkan barang yang tidak terpakai, tata alat kerja di toolbox sesuai posisinya agar mudah dicari.</li><li><strong>Resik & Rawat</strong> — selalu bersihkan tumpahan oli segera setelah bekerja untuk mencegah bahaya tergelincir. Bersihkan peralatan setelah digunakan.</li><li><strong>Rajin</strong> — patuhi Standar Operasional Prosedur (SOP) dan disiplin waktu.</li></ul><h3>Prosedur Keadaan Darurat</h3><p>Jika terjadi kecelakaan atau kebakaran di bengkel:</p><ul><li><strong>Matikan Aliran Listrik & Mesin</strong> — segera matikan kunci kontak utama atau saklar darurat.</li><li><strong>Gunakan APAR (Alat Pemadam Api Ringan)</strong> — semprotkan pada titik api kecil dengan teknik PASS (Pull, Aim, Squeeze, Sweep). Jangan siram kebakaran listrik dengan air!</li><li><strong>Evakuasi</strong> — ikuti jalur evakuasi menuju titik kumpul jika kondisi tidak aman.</li></ul><h3>Prosedur Perawatan & Perbaikan</h3><ul><li><strong>Perawatan (Maintenance)</strong> — tindakan pencegahan agar komponen tidak cepat rusak (misal: cek level minyak rem berkala).</li><li><strong>Perbaikan (Repair)</strong> — membetulkan komponen yang sudah rusak/aus (misal: mengganti kampas rem yang tipis).</li></ul>",
+          keyPoints: [
+            "Budaya kerja 5S/5R menjamin efisiensi, kebersihan, dan keselamatan di bengkel",
+            "Keadaan darurat: matikan daya sirkuit, gunakan APAR untuk api kecil, evakuasi",
+            "Perawatan bersifat preventif, sedangkan perbaikan bersifat restoratif/kuratif"
+          ],
+          animation: "work-culture"
+        },
         {
           title: "Pengenalan Sistem Rem",
           content: "<h3>Apa Itu Sistem Rem?</h3><p>Sistem rem adalah salah satu sistem keselamatan paling penting pada kendaraan. Fungsinya adalah <strong>memperlambat</strong> dan <strong>menghentikan</strong> laju kendaraan secara aman dan terkendali.</p><p>Prinsip dasar kerja rem adalah <strong>gesekan (friction)</strong>. Ketika pengemudi menginjak pedal rem, komponen rem akan saling bergesekan sehingga energi kinetik (gerak) kendaraan diubah menjadi energi panas, dan kendaraan melambat.</p><h3>Jenis Sistem Rem</h3><ul><li><strong>Rem Cakram (Disc Brake)</strong> — menggunakan kaliper dan kampas rem yang menjepit piringan/cakram</li><li><strong>Rem Tromol (Drum Brake)</strong> — menggunakan sepatu rem yang menekan dinding tromol dari dalam</li><li><strong>Rem Tangan / Rem Parkir</strong> — mengunci roda saat kendaraan diparkir</li></ul><p><em>⚠️ K3: Selalu pastikan sistem rem berfungsi baik sebelum mengendarai kendaraan. Rem yang aus dapat menyebabkan kecelakaan fatal!</em></p>",
@@ -49,51 +68,51 @@ const GAME_DATA = {
         },
         {
           title: "Komponen Utama Sistem Rem Hidraulis",
-          content: "<h3>Master Cylinder (Silinder Master)</h3><p><strong>Fungsi:</strong> Mengubah tekanan mekanis dari pedal rem menjadi tekanan hidraulis (cairan). Komponen ini terletak di <strong>ruang mesin</strong>, tepat di depan dinding pembatas (firewall).</p><p><strong>Bentuk:</strong> Tabung logam silinder dengan reservoir minyak rem di atasnya.</p><h3>Brake Booster (Penguat Rem)</h3><p><strong>Fungsi:</strong> Memperbesar tenaga pengereman agar pengemudi tidak perlu menginjak pedal terlalu kuat. Menggunakan tekanan vakum dari intake manifold mesin.</p><p><strong>Letak:</strong> Di antara pedal rem dan master cylinder, menempel pada firewall.</p><p><strong>Bentuk:</strong> Komponen bulat besar berwarna hitam di balik master cylinder.</p><h3>Brake Line & Brake Hose (Pipa dan Selang Rem)</h3><p><strong>Fungsi:</strong> Menyalurkan minyak rem bertekanan dari master cylinder ke setiap roda.</p><ul><li><strong>Brake line</strong> — pipa logam kaku, terletak di sepanjang bodi bawah kendaraan</li><li><strong>Brake hose</strong> — selang karet fleksibel, menghubungkan pipa rem ke kaliper/wheel cylinder di roda</li></ul>",
+          content: "<h3>Brake Line & Brake Hose (Pipa dan Selang Rem)</h3><p><strong>Fungsi:</strong> Menyalurkan minyak rem bertekanan dari master cylinder ke setiap roda.</p><ul><li><strong>Brake line</strong> — pipa logam kaku, terletak di sepanjang bodi bawah kendaraan</li><li><strong>Brake hose</strong> — selang karet fleksibel, menghubungkan pipa rem ke kaliper/wheel cylinder di roda</li></ul><h3>Pemeriksaan & Kebocoran (Maintenance)</h3><p><em>⚠️ K3: Minyak rem bersifat korosif terhadap cat bodi kendaraan dan dapat menyebabkan iritasi kulit. Gunakan sarung tangan karet saat menangani minyak rem!</em></p><p>Periksa ketebalan selang rem dan pastikan tidak ada kebocoran minyak rem di sambungan pipa karena kebocoran sirkuit rem hidrolik dapat menyebabkan rem blong.</p>",
           keyPoints: [
-            "Master cylinder mengubah tekanan mekanis menjadi tekanan hidraulis",
-            "Brake booster memperbesar tenaga pengereman menggunakan vakum",
-            "Brake line (pipa) dan brake hose (selang) menyalurkan minyak rem ke roda"
+            "Brake line (pipa) dan brake hose (selang) menyalurkan minyak rem ke roda",
+            "Minyak rem bersifat korosif dan berbahaya untuk kulit (gunakan sarung tangan)",
+            "Kebocoran minyak rem harus dideteksi dini untuk mencegah rem blong"
           ],
           animation: "brake-hydraulic"
         },
         {
-          title: "Rem Tromol (Drum Brake)",
-          content: "<h3>Apa Itu Rem Tromol?</h3><p>Rem tromol adalah jenis rem yang menggunakan <strong>tromol (drum)</strong> berbentuk mangkuk besar yang berputar bersama roda. Di dalamnya terdapat sepatu rem yang menekan dinding tromol untuk menghentikan putaran.</p><p>Rem tromol umumnya dipasang di <strong>roda belakang</strong> kendaraan ringan.</p><h3>Komponen Rem Tromol</h3><ul><li><strong>Brake Shoe (Sepatu Rem)</strong> — komponen melengkung dengan lapisan kampas yang menekan dinding tromol. Terdapat 2 buah (leading dan trailing shoe).</li><li><strong>Wheel Cylinder (Silinder Roda)</strong> — menerima tekanan hidraulis dan mendorong brake shoe ke luar agar menekan tromol. Terletak di bagian atas backing plate.</li><li><strong>Return Spring (Pegas Pengembali)</strong> — menarik brake shoe kembali ke posisi semula saat pedal rem dilepas.</li><li><strong>Backing Plate (Plat Penahan)</strong> — pelat logam yang menjadi dudukan semua komponen rem tromol. Terpasang pada poros roda (axle).</li><li><strong>Drum (Tromol)</strong> — komponen berbentuk mangkuk yang berputar bersama roda dan menjadi permukaan gesekan.</li></ul>",
-          keyPoints: [
-            "Rem tromol menggunakan sepatu rem yang menekan dinding tromol dari dalam",
-            "Umumnya dipasang di roda belakang kendaraan ringan",
-            "Komponen utama: brake shoe, wheel cylinder, return spring, backing plate, drum"
-          ],
-          animation: "drum-brake"
-        },
-        {
           title: "Rem Cakram (Disc Brake)",
-          content: "<h3>Apa Itu Rem Cakram?</h3><p>Rem cakram menggunakan <strong>piringan/cakram (rotor)</strong> yang berputar bersama roda. Kaliper yang berisi kampas rem akan <strong>menjepit</strong> cakram untuk menghentikan putaran roda.</p><p>Rem cakram umumnya dipasang di <strong>roda depan</strong>, dan pada kendaraan modern sering dipasang di keempat roda karena pendinginannya lebih baik.</p><h3>Komponen Rem Cakram</h3><ul><li><strong>Rotor/Disc (Cakram/Piringan)</strong> — piringan logam yang berputar bersama roda. Permukaannya halus dan rata. Ada tipe solid dan ventilated (berventilasi).</li><li><strong>Caliper (Kaliper)</strong> — komponen yang menjepit cakram. Di dalamnya terdapat piston hidraulis yang mendorong kampas rem. Terletak mengapit cakram di sisi roda.</li><li><strong>Brake Pad (Kampas Rem)</strong> — bantalan yang menempel di kaliper dan bergesekan langsung dengan cakram. Terdapat 2 buah kampas (dalam dan luar).</li></ul><h3>Keunggulan Rem Cakram</h3><ul><li>Pendinginan lebih baik karena terbuka (tidak tertutup seperti tromol)</li><li>Performa pengereman lebih stabil saat panas</li><li>Lebih mudah diperiksa dan diganti komponennya</li></ul>",
+          content: "<h3>Apa Itu Rem Cakram?</h3><p>Rem cakram menggunakan <strong>piringan/cakram (rotor)</strong> yang berputar bersama roda. Kaliper yang berisi kampas rem akan <strong>menjepit</strong> cakram untuk menghentikan putaran roda.</p><p>Rem cakram umumnya dipasang di <strong>roda depan</strong>, dan pada kendaraan modern sering dipasang di keempat roda karena pendinginannya lebih baik.</p><h3>Komponen Rem Cakram</h3><ul><li><strong>Rotor/Disc (Cakram/Piringan)</strong> — piringan logam yang berputar bersama roda.</li><li><strong>Caliper (Kaliper)</strong> — komponen yang menjepit cakram. Di dalamnya terdapat piston hidraulis yang mendorong kampas rem.</li><li><strong>Brake Pad (Kampas Rem)</strong> — bantalan yang menempel di kaliper dan bergesekan langsung dengan cakram.</li></ul><h3>K3 Pemeriksaan Cakram</h3><p><em>⚠️ K3: Debu hasil gesekan kampas rem mengandung partikel halus berbahaya. Gunakan masker saat membersihkan kaliper dan kampas rem, serta hindari menyemprot debu dengan angin kompresor secara langsung!</em></p>",
           keyPoints: [
             "Rem cakram menggunakan kaliper yang menjepit piringan/cakram",
-            "Umumnya dipasang di roda depan kendaraan",
-            "Komponen utama: rotor/disc, caliper, brake pad"
+            "Komponen utama: rotor/disc, caliper, brake pad",
+            "Pekerjaan kampas rem menghasilkan debu berbahaya (gunakan masker saat bekerja)"
           ],
           animation: "disc-brake"
         },
         {
-          title: "Rem Tangan (Parking Brake)",
-          content: "<h3>Fungsi Rem Tangan</h3><p>Rem tangan atau rem parkir berfungsi untuk <strong>mengunci roda</strong> (biasanya roda belakang) saat kendaraan diparkir, terutama di jalan yang miring/menanjak.</p><p><strong>Letak:</strong> Tuas rem tangan biasanya terletak di antara kursi pengemudi dan penumpang depan (konsol tengah), atau berupa pedal di sisi kiri bawah dashboard pada beberapa kendaraan.</p><h3>Cara Kerja</h3><p>Rem tangan menggunakan <strong>kabel baja</strong> yang terhubung ke mekanisme rem di roda belakang. Saat tuas ditarik:</p><ul><li>Kabel baja menarik tuas pada brake shoe (rem tromol) atau mengaktifkan kaliper khusus (rem cakram)</li><li>Kampas/sepatu rem menekan tromol/cakram dan mengunci roda</li></ul><h3>Sistem EPB (Electronic Parking Brake)</h3><p>Pada kendaraan modern, rem tangan konvensional digantikan oleh <strong>EPB</strong> yang menggunakan motor listrik untuk mengaktifkan rem parkir melalui tombol.</p><p><em>⚠️ K3: Selalu aktifkan rem tangan saat parkir, terutama di tanjakan. Gunakan ganjal roda sebagai pengaman tambahan!</em></p>",
+          title: "Rem Tromol (Drum Brake)",
+          content: "<h3>Apa Itu Rem Tromol?</h3><p>Rem tromol adalah jenis rem yang menggunakan <strong>tromol (drum)</strong> berbentuk mangkuk besar yang berputar bersama roda. Di dalamnya terdapat sepatu rem yang menekan dinding tromol untuk menghentikan putaran.</p><p>Rem tromol umumnya dipasang di <strong>roda belakang</strong> kendaraan ringan.</p><h3>Komponen Rem Tromol</h3><ul><li><strong>Brake Shoe (Sepatu Rem)</strong> — komponen melengkung dengan lapisan kampas yang menekan dinding tromol.</li><li><strong>Wheel Cylinder (Silinder Roda)</strong> — menerima tekanan hidraulis dan mendorong brake shoe ke luar.</li><li><strong>Return Spring (Pegas Pengembali)</strong> — menarik brake shoe kembali ke posisi semula saat pedal rem dilepas.</li><li><strong>Backing Plate (Plat Penahan)</strong> — dudukan semua komponen rem tromol.</li></ul><h3>Prosedur Perawatan</h3><p>Secara berkala bersihkan rem tromol menggunakan brake cleaner khusus. Jangan hirup debu rem tromol karena dapat mengganggu pernapasan.</p>",
           keyPoints: [
-            "Rem tangan berfungsi mengunci roda saat kendaraan diparkir",
-            "Menggunakan kabel baja yang terhubung ke rem roda belakang",
-            "Kendaraan modern menggunakan Electronic Parking Brake (EPB)"
+            "Rem tromol menggunakan sepatu rem yang menekan dinding tromol dari dalam",
+            "Umumnya dipasang di roda belakang kendaraan ringan",
+            "Pembersihan harus menggunakan cairan khusus pembersih rem (brake cleaner)"
           ],
-          animation: "parking-brake"
+          animation: "drum-brake"
         },
         {
-          title: "Sistem ABS (Anti-lock Braking System)",
-          content: "<h3>Apa Itu ABS?</h3><p>ABS adalah sistem keselamatan yang <strong>mencegah roda terkunci (lock)</strong> saat pengereman mendadak. Tanpa ABS, roda bisa berhenti berputar sementara kendaraan masih meluncur, menyebabkan kehilangan kendali.</p><h3>Komponen ABS</h3><ul><li><strong>Sensor Kecepatan Roda (Wheel Speed Sensor)</strong> — mendeteksi kecepatan putaran setiap roda. Terletak di dekat hub/bearing roda.</li><li><strong>ABS Control Module (ECU ABS)</strong> — unit kontrol elektronik yang memproses data dari sensor dan mengatur tekanan rem. Biasanya terletak di ruang mesin.</li><li><strong>Hydraulic Modulator</strong> — mengatur tekanan hidraulis ke setiap kaliper/wheel cylinder sesuai perintah ECU.</li></ul><h3>Cara Kerja Sederhana</h3><ol><li>Sensor mendeteksi roda hampir terkunci</li><li>ECU ABS memerintahkan modulator mengurangi tekanan rem pada roda tersebut</li><li>Roda kembali berputar → tekanan rem ditambah kembali</li><li>Proses ini terjadi sangat cepat (puluhan kali per detik)</li></ol><p>Pengemudi merasakan <strong>getaran pada pedal rem</strong> saat ABS aktif — ini normal!</p><p><em>⚠️ K3: ABS membantu menjaga kendali kendaraan saat pengereman darurat, tetapi tetap jaga jarak aman!</em></p>",
+          title: "Master Silinder & Brake Booster",
+          content: "<h3>Master Cylinder (Silinder Master)</h3><p><strong>Fungsi:</strong> Mengubah tekanan mekanis dari pedal rem menjadi tekanan hidraulis (cairan). Komponen ini terletak di <strong>ruang mesin</strong>, tepat di depan dinding pembatas (firewall).</p><p><strong>Bentuk:</strong> Tabung logam silinder dengan reservoir minyak rem di atasnya.</p><h3>Brake Booster (Penguat Rem)</h3><p><strong>Fungsi:</strong> Memperbesar tenaga pengereman agar pengemudi tidak perlu menginjak pedal terlalu kuat. Menggunakan tekanan vakum dari intake manifold mesin.</p><p><strong>Letak:</strong> Di antara pedal rem dan master cylinder, menempel pada firewall.</p><h3>Tips Perawatan</h3><p>Pastikan volume minyak rem di dalam reservoir silinder master selalu berada di antara garis MIN dan MAX. Jangan biarkan minyak rem habis karena udara akan masuk ke sistem dan menyebabkan kegagalan rem.</p>",
           keyPoints: [
-            "ABS mencegah roda terkunci saat pengereman mendadak",
-            "Komponen utama: sensor kecepatan roda, ECU ABS, hydraulic modulator",
-            "ABS bekerja otomatis dengan mengatur tekanan rem secara cepat"
+            "Master cylinder mengubah tekanan mekanis menjadi tekanan hidraulis",
+            "Brake booster memperbesar tenaga pengereman menggunakan tekanan vakum",
+            "Periksa level minyak rem secara teratur di reservoir silinder master"
+          ],
+          animation: "master-cylinder"
+        },
+        {
+          title: "Rem Tangan & Sistem ABS",
+          content: "<h3>Rem Tangan (Parking Brake)</h3><p>Berfungsi untuk <strong>mengunci roda belakang</strong> saat kendaraan diparkir, terutama di jalan yang miring/menanjak. Menggunakan kabel baja mekanis.</p><h3>Sistem ABS (Anti-lock Braking System)</h3><p>ABS adalah sistem keselamatan yang <strong>mencegah roda terkunci (lock)</strong> saat pengereman mendadak di jalan licin, sehingga kendaraan tetap bisa dikendalikan arahnya.</p><h3>Komponen ABS</h3><ul><li><strong>Wheel Speed Sensor</strong> — mendeteksi kecepatan putaran roda.</li><li><strong>ECU ABS</strong> — unit kontrol elektronik yang memproses data sensor.</li><li><strong>Hydraulic Modulator</strong> — mengatur tekanan hidraulis rem secara cepat (puluhan kali per detik).</li></ul><p><em>⚠️ K3: Sistem rem parkir dan ABS adalah fitur keselamatan mutlak. Pastikan indikator lampu ABS di dashboard mati saat mesin hidup (tanda sistem berfungsi normal).</em></p>",
+          keyPoints: [
+            "Rem tangan berfungsi mengunci roda belakang saat parkir lewat kabel mekanis",
+            "ABS mencegah roda terkunci saat rem mendadak agar setir tetap dapat dikendalikan",
+            "Indikator ABS di dashboard mendeteksi malfungsi sistem pengaman pengereman"
           ],
           animation: "abs-system"
         }
@@ -308,6 +327,32 @@ const GAME_DATA = {
           ],
           correct: 2,
           explanation: "Minyak rem bertekanan disalurkan dari master cylinder ke kaliper/wheel cylinder di setiap roda melalui pipa rem (brake line) yang terbuat dari logam dan selang rem (brake hose) yang terbuat dari karet fleksibel."
+        },
+        {
+          id: "q1-11",
+          question: "Mengapa minyak rem yang mengenai cat bodi kendaraan harus segera dibersihkan dengan air?",
+          image: null,
+          options: [
+            "Minyak rem dapat menyerap air di udara",
+            "Minyak rem bersifat korosif dan dapat merusak cat bodi kendaraan",
+            "Minyak rem dapat membeku jika dibiarkan",
+            "Minyak rem dapat mengurangi tekanan hidrolik roda"
+          ],
+          correct: 1,
+          explanation: "Minyak rem bersifat sangat korosif terhadap cat bodi kendaraan. Jika tidak sengaja tumpah atau menetes ke bodi kendaraan, harus segera dibilas menggunakan air mengalir agar cat tidak melepuh."
+        },
+        {
+          id: "q1-12",
+          question: "Alat pemadam kebakaran (APAR) jenis apa yang TIDAK boleh digunakan untuk memadamkan kebakaran akibat korsleting listrik di bengkel?",
+          image: null,
+          options: [
+            "APAR jenis Powder (serbuk kimia kering)",
+            "APAR jenis Karbon Dioksida (CO2)",
+            "Air",
+            "APAR jenis foam khusus non-konduktif"
+          ],
+          correct: 2,
+          explanation: "Air adalah penghantar listrik yang baik. Menggunakan air untuk memadamkan korsleting listrik sangat berbahaya karena dapat memicu sengatan listrik dan memperluas hubungan pendek."
         }
       ]
     },
