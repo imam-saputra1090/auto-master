@@ -19,6 +19,7 @@ const App = {
   currentLevel: null,
   currentSlide: 0,
   lastPhase: null, // Untuk mengetahui fase terakhir saat retry
+  learningSource: null, // Untuk melacak asal belajar ('library' atau 'map')
 
   // ════════════════════════════════════════════════════════════
   //  INISIALISASI
@@ -319,7 +320,10 @@ const App = {
     });
 
     this._bindClick('btn-back-from-learn', () => {
-      if (this.currentLevel) {
+      if (this.learningSource === 'library') {
+        this.showScreen('library');
+        this.renderLibrary();
+      } else if (this.currentLevel) {
         this.openLevel(this.currentLevel);
       } else {
         this.showScreen('map');
@@ -861,6 +865,7 @@ const App = {
    * @param {number} levelId — ID level
    */
   startLearn(levelId) {
+    this.learningSource = 'map';
     this.currentLevel = levelId;
     this.currentSlide = 0;
     this.showScreen('learn');
@@ -1078,7 +1083,13 @@ const App = {
       }
 
       this.updatePlayerInfo();
-      this.openLevel(this.currentLevel);
+      
+      if (this.learningSource === 'library') {
+        this.showScreen('library');
+        this.renderLibrary();
+      } else {
+        this.openLevel(this.currentLevel);
+      }
     }
   },
 
@@ -1257,6 +1268,7 @@ const App = {
       `;
 
       card.addEventListener('click', () => {
+        this.learningSource = 'library';
         this.currentLevel = levelId;
         this.currentSlide = 0;
         this.showScreen('learn');
@@ -1453,7 +1465,7 @@ const App = {
           <label for="input-api-url">API URL Google Sheets (Terkunci):</label>
           <div style="position: relative;">
             <input type="text" id="input-api-url" value="${currentApiUrl}" readonly 
-                   style="width:100%; padding:8px 10px 8px 30px; border-radius:4px; border:1px solid #444; background:#222; color:#888; cursor:not-allowed;" />
+                   style="width:100%; padding:8px 10px 8px 30px; border-radius:4px; cursor:not-allowed;" />
             <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888;">🔒</span>
           </div>
           <small style="color: var(--text-muted); display: block; margin-top: 4px;">Info: Koneksi database dikunci oleh sistem agar tidak dapat diubah oleh siswa.</small>
@@ -1462,12 +1474,12 @@ const App = {
 
       <div class="settings-section">
         <h3>🎨 Tema Tampilan</h3>
-        <div class="settings-field" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="settings-field" style="display: flex; justify-content: space-between; align-items: center; gap: var(--sp-md);">
           <div>
             <label style="margin-bottom: 0;">Mode Terang / Gelap</label>
             <small style="color: var(--text-muted); display: block; margin-top: 2px;">Sesuaikan warna tampilan game agar nyaman di mata.</small>
           </div>
-          <button id="btn-toggle-theme" class="btn btn-secondary" type="button" style="padding: 8px 16px; border-radius: var(--radius-md); font-weight: 500; display: flex; align-items: center; gap: 8px;">
+          <button id="btn-toggle-theme" class="btn btn-secondary" type="button" style="flex-shrink: 0; padding: 8px 16px; border-radius: var(--radius-md); font-weight: 500; display: flex; align-items: center; gap: 8px;">
             ${document.body.classList.contains('light-theme') ? '☀️ Mode Terang' : '🌙 Mode Gelap'}
           </button>
         </div>
