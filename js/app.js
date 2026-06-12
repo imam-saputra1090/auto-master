@@ -1268,24 +1268,24 @@ const App = {
       this.currentSlide++;
       this.renderLearnSlide();
     } else {
-      // Selesaikan fase belajar
-      const result = ProgressManager.completeLearn(this.currentLevel);
-      this.showToast('📖 Materi selesai! +50 XP', 'success');
-
-      // Cek pencapaian baru
-      const newAchievements = ProgressManager.checkAchievements();
-      if (newAchievements.length > 0) {
-        newAchievements.forEach((ach, idx) => {
-          setTimeout(() => this.showAchievement(ach), (idx + 1) * 1500);
-        });
-      }
-
-      this.updatePlayerInfo();
-      
       if (this.learningSource === 'library') {
+        this.showToast('📖 Selesai membaca materi referensi.', 'success');
         this.showScreen('library');
         this.renderLibrary();
       } else {
+        // Selesaikan fase belajar
+        const result = ProgressManager.completeLearn(this.currentLevel);
+        this.showToast('📖 Materi selesai! +50 XP', 'success');
+
+        // Cek pencapaian baru
+        const newAchievements = ProgressManager.checkAchievements();
+        if (newAchievements.length > 0) {
+          newAchievements.forEach((ach, idx) => {
+            setTimeout(() => this.showAchievement(ach), (idx + 1) * 1500);
+          });
+        }
+
+        this.updatePlayerInfo();
         this.openLevel(this.currentLevel);
       }
     }
