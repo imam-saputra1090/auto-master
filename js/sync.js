@@ -328,12 +328,12 @@ const SyncManager = {
    */
   async getLeaderboard(levelId) {
     if (!navigator.onLine) {
-      return { success: false, message: 'Tidak ada koneksi internet.', data: [] };
+      return { success: false, message: 'Tidak ada koneksi internet.', data: { entries: [] } };
     }
 
     const apiUrl = this._getApiUrl();
     if (!apiUrl) {
-      return { success: false, message: 'API URL belum dikonfigurasi.', data: [] };
+      return { success: false, message: 'API URL belum dikonfigurasi.', data: { entries: [] } };
     }
 
     try {
@@ -344,34 +344,52 @@ const SyncManager = {
       });
 
       if (!response.ok) {
-        return { success: false, message: 'Server error: ' + response.status, data: [] };
+        return { success: false, message: 'Server error: ' + response.status, data: { entries: [] } };
       }
 
       const result = await response.json();
 
-      if (result.success && Array.isArray(result.data)) {
-        // Sort by score descending, then by timestamp ascending (earlier = better)
-        const sorted = result.data.sort(function (a, b) {
-          if (b.score !== a.score) return b.score - a.score;
-          if (b.stars !== a.stars) return b.stars - a.stars;
-          return (a.timestamp || '').localeCompare(b.timestamp || '');
+      let entries = [];
+      if (result.success && result.data) {
+        if (Array.isArray(result.data.entries)) {
+          entries = result.data.entries;
+        } else if (Array.isArray(result.data)) {
+          entries = result.data;
+        }
+      }
+
+      if (entries.length > 0) {
+        // Sort by totalScore descending, then totalStars descending, then totalXP descending
+        entries.sort(function (a, b) {
+          const scoreA = typeof a.totalScore === 'number' ? a.totalScore : (a.score || 0);
+          const scoreB = typeof b.totalScore === 'number' ? b.totalScore : (b.score || 0);
+          const starsA = typeof a.totalStars === 'number' ? a.totalStars : (a.stars || 0);
+          const starsB = typeof b.totalStars === 'number' ? b.totalStars : (b.stars || 0);
+          const xpA = typeof a.totalXP === 'number' ? a.totalXP : (a.xp || 0);
+          const xpB = typeof b.totalXP === 'number' ? b.totalXP : (b.xp || 0);
+
+          if (scoreB !== scoreA) return scoreB - scoreA;
+          if (starsB !== starsA) return starsB - starsA;
+          return xpB - xpA;
         });
 
         return {
           success: true,
           message: 'Leaderboard berhasil dimuat.',
-          data: sorted.slice(0, 50) // Top 50
+          data: {
+            entries: entries.slice(0, 50) // Top 50
+          }
         };
       }
 
       return {
         success: false,
         message: result.message || 'Tidak ada data leaderboard.',
-        data: []
+        data: { entries: [] }
       };
     } catch (err) {
       console.error('[SyncManager] Leaderboard error:', err);
-      return { success: false, message: 'Gagal mengambil data leaderboard.', data: [] };
+      return { success: false, message: 'Gagal mengambil data leaderboard.', data: { entries: [] } };
     }
   },
 
