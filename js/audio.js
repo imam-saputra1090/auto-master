@@ -73,13 +73,13 @@ const AudioManager = {
       // Setup Musik Latar (BGM)
       this.bgmAudio = new Audio();
       this.bgmAudio.loop = true;
-      this._setupAudioSource(this.bgmAudio, this.bgmAset);
+      this._setupAudioSource(this.bgmAudio, this.bgmAset, true);
       this.bgmAudio.volume = this.isBgmMuted ? 0 : this.bgmVolume;
 
       // Pre-load SFX ke Cache
       for (const sfxName in this.sfxAset) {
         const audioObj = new Audio();
-        this._setupAudioSource(audioObj, this.sfxAset[sfxName]);
+        this._setupAudioSource(audioObj, this.sfxAset[sfxName], false);
         audioObj.volume = this.isSfxMuted ? 0 : this.sfxVolume;
         this.sfxCache[sfxName] = audioObj;
       }
@@ -98,7 +98,7 @@ const AudioManager = {
   /**
    * Mengatur source file audio dengan fallback CDN jika terjadi error memuat file lokal.
    */
-  _setupAudioSource(audioElement, pathArray) {
+  _setupAudioSource(audioElement, pathArray, isBGM = false) {
     let sourceIndex = 0;
     audioElement.src = pathArray[sourceIndex];
 
@@ -106,8 +106,19 @@ const AudioManager = {
       sourceIndex++;
       if (sourceIndex < pathArray.length) {
         console.warn(`[AudioManager] File audio lokal tidak ditemukan/error. Beralih ke CDN: ${pathArray[sourceIndex]}`);
+        
+        // Simpan status pemutaran sebelum disetel ulang oleh load()
+        const wasPaused = audioElement.paused;
+        
         audioElement.src = pathArray[sourceIndex];
         audioElement.load();
+        
+        // Jika sebelumnya sedang berjalan (tidak paused) atau ini BGM, coba putar otomatis
+        if (isBGM || !wasPaused) {
+          audioElement.play().catch(err => {
+            console.log('[AudioManager] Autoplay fallback CDN tertunda:', err);
+          });
+        }
       } else {
         console.error('[AudioManager] Semua alternatif pemuatan file audio gagal.');
       }

@@ -2501,7 +2501,11 @@ const App = {
           const waFormatted = s.wa ? (s.wa.startsWith('0') ? '62' + s.wa.slice(1) : s.wa) : '';
           const waLink = waFormatted ? `<a href="https://wa.me/${waFormatted}" target="_blank" style="color: var(--clr-primary); text-decoration: underline; font-weight: 500;">${s.wa}</a>` : '-';
           
-          const completedLevels = (s.progress?.completedLevels || []).map(String);
+          const completedLevels = (s.progress?.completedLevels || []).map(l => {
+            let str = String(l).trim();
+            if (str.indexOf('.') !== -1) str = str.split('.')[0];
+            return str.replace(/\D/g, "");
+          });
           const l1 = completedLevels.includes('1') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
           const l2 = completedLevels.includes('2') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
           const l3 = completedLevels.includes('3') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
