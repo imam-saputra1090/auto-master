@@ -9,6 +9,9 @@
  * ============================================================
  * FILE INI HARUS DIMUAT TERAKHIR setelah:
  *   data.js → progress.js → quiz.js → simulation.js → app.js
+ * ============================================================
+ */
+
 // ── FAILSAFE AUDIOMANAGER ────────────────────────────────────
 // Jika js/audio.js gagal dimuat (misal: belum diunggah atau 404),
 // buat objek dummy agar aplikasi tidak crash saat diakses.
