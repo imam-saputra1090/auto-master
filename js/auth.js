@@ -59,6 +59,26 @@ const AuthManager = {
   },
 
   /**
+   * Detect and return the device operating system/type.
+   * @returns {string} Device description (e.g. "Windows PC", "Android Mobile", etc.)
+   */
+  _getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+      return "Tablet";
+    }
+    if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+      if (/android/i.test(ua)) return "Android Mobile";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS Mobile";
+      return "Mobile";
+    }
+    if (/Windows/i.test(ua)) return "Windows PC";
+    if (/Macintosh/i.test(ua)) return "macOS PC";
+    if (/Linux/i.test(ua)) return "Linux PC";
+    return "Desktop";
+  },
+
+  /**
    * Validate NIS (Nomor Induk Siswa).
    * Must be numeric, 4-10 digits.
    * @param {string} nis
@@ -217,7 +237,9 @@ const AuthManager = {
       const payload = {
         action: 'login',
         nis: nis.trim(),
-        password: password
+        password: password,
+        device: this._getDeviceType(),
+        userAgent: navigator.userAgent
       };
 
       const response = await fetch(url, {
