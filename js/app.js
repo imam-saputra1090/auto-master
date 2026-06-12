@@ -949,159 +949,213 @@ const App = {
       return;
     }
 
-    // If offline
-    if (!navigator.onLine) {
-      bannerEl.style.display = 'flex';
-      bannerEl.className = 'ranking-banner-container';
-      bannerEl.innerHTML = `
-        <div class="ranking-banner-content">
-          <div class="ranking-banner-icon">📡</div>
-          <div class="ranking-banner-info">
-            <div class="ranking-banner-title">Mode Offline</div>
-            <div class="ranking-banner-desc">Hubungkan internet untuk melihat peringkat kelas secara live.</div>
-          </div>
-        </div>
-      `;
-      return;
-    }
+    // Helper SVG icons for the slides
+    const getBannerIconSvg = (type) => {
+      switch (type) {
+        case 'sayembara':
+          return `
+            <svg width="60" height="60" viewBox="0 0 48 48" class="svg-banner-icon color-gold">
+              <path d="M 12 12 L 36 12 L 34 26 C 34 32 29 36 24 36 C 19 36 14 32 14 26 Z" fill="none" stroke="currentColor" stroke-width="2.5" class="pulse-glow" />
+              <path d="M 20 36 L 20 42 M 28 36 L 28 42 M 16 42 L 32 42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+              <g class="spin-cw" style="transform-origin: 24px 22px;">
+                <circle cx="24" cy="22" r="5" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3, 2" />
+              </g>
+            </svg>
+          `;
+        case 'medsos':
+          return `
+            <svg width="60" height="60" viewBox="0 0 48 48" class="svg-banner-icon color-ig">
+              <rect x="8" y="8" width="32" height="32" rx="10" fill="none" stroke="currentColor" stroke-width="3" />
+              <circle cx="24" cy="24" r="7" fill="none" stroke="currentColor" stroke-width="3" class="spin-cw" />
+              <circle cx="33" cy="15" r="2.5" fill="currentColor" />
+            </svg>
+          `;
+        case 'k3':
+          return `
+            <svg width="60" height="60" viewBox="0 0 48 48" class="svg-banner-icon color-teal">
+              <path d="M 14 20 H 34 C 36 20 36 30 34 30 H 14 C 12 30 12 20 14 20 Z" fill="none" stroke="currentColor" stroke-width="2.5" />
+              <path d="M 22 24 Q 24 22 26 24" fill="none" stroke="currentColor" stroke-width="2.5" />
+              <circle cx="18" cy="25" r="3" fill="currentColor" opacity="0.6" class="pulse-glow" />
+              <circle cx="30" cy="25" r="3" fill="currentColor" opacity="0.6" class="pulse-glow" />
+              <path d="M 16 18 C 16 12 32 12 32 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          `;
+        case 'peringkat':
+          return `
+            <svg width="60" height="60" viewBox="0 0 48 48" class="svg-banner-icon color-blue">
+              <circle cx="24" cy="30" r="12" fill="none" stroke="currentColor" stroke-width="2.5" />
+              <path d="M 24 18 L 18 6 L 30 6 Z" fill="none" stroke="currentColor" stroke-width="2.5" />
+              <path d="M 20 6 L 24 18 L 28 6" fill="none" stroke="currentColor" stroke-width="1.5" />
+              <polygon points="24,24 26,27 30,27 27,29 28,33 24,31 20,33 21,29 18,27 22,27" fill="currentColor" class="pulse-glow" />
+            </svg>
+          `;
+        default:
+          return '🏁';
+      }
+    };
 
-    // If API is not configured
-    if (typeof SyncManager === 'undefined' || !SyncManager._getApiUrl()) {
-      bannerEl.style.display = 'flex';
-      bannerEl.className = 'ranking-banner-container';
-      bannerEl.innerHTML = `
-        <div class="ranking-banner-content">
-          <div class="ranking-banner-icon">🔒</div>
-          <div class="ranking-banner-info">
-            <div class="ranking-banner-title">Koneksi Database Belum Aktif</div>
-            <div class="ranking-banner-desc">API URL Google Sheets belum diatur di menu Pengaturan.</div>
-          </div>
-        </div>
-      `;
-      return;
-    }
+    // Base slides of Direktorat SMK program & guidelines
+    const slides = [
+      {
+        icon: getBannerIconSvg('sayembara'),
+        title: "Sayembara Direktorat SMK",
+        desc: "Dukungan penuh dari <b>Direktorat SMK Kemendikbudristek</b> dalam melahirkan lulusan vokasi otomotif TKR yang hebat!",
+        btnText: "Buka Portal 🌐",
+        btnAction: () => window.open('https://smk.kemdikbud.go.id/', '_blank')
+      },
+      {
+        icon: getBannerIconSvg('medsos'),
+        title: "Instagram @direktoratsmk",
+        desc: "Kunjungi akun resmi Instagram <b>@direktoratsmk</b> untuk update lomba, prestasi, beasiswa, dan pameran SMK vokasi!",
+        btnText: "Buka Instagram 📸",
+        btnAction: () => window.open('https://www.instagram.com/direktoratsmk/', '_blank')
+      },
+      {
+        icon: getBannerIconSvg('k3'),
+        title: "Penerapan K3 & Budaya 5R",
+        desc: "Latih kesiapan kerja Anda! Terapkan Ringkas, Rapi, Resik, Rawat, Rajin (5R) serta alat pelindung diri lengkap di bengkel.",
+        btnText: "Mulai Belajar 🏁",
+        btnAction: () => this.showScreen('map')
+      }
+    ];
 
-    try {
-      // Show loading skeleton inside banner
-      bannerEl.style.display = 'flex';
-      bannerEl.className = 'ranking-banner-container';
-      bannerEl.innerHTML = `
-        <div class="ranking-banner-content" style="width: 100%; justify-content: center; padding: 10px 0;">
-          <div class="ranking-banner-icon" style="font-size: 1.5rem; margin-right: 8px; animation: spin 1s linear infinite;">🔄</div>
-          <div class="ranking-banner-info">
-            <div class="ranking-banner-title" style="font-size: 0.95rem; font-weight: 500;">Menghubungkan ke Google Sheets...</div>
-          </div>
-        </div>
-      `;
-
-      // Fetch leaderboard from SyncManager
-      const res = await SyncManager.getLeaderboard('all');
-      
-      if (res.success && res.data && Array.isArray(res.data.entries) && res.data.entries.length > 0) {
-        const entries = res.data.entries;
-        const totalStudents = entries.length;
-        
-        // Find player index
-        const playerIndex = entries.findIndex(player => String(player.nis) === String(currentNis));
-        
-        if (playerIndex !== -1) {
-          const rank = playerIndex + 1;
-          
-          let emoji = '🏅';
-          let rankClass = '';
-          let motivationText = '';
-          
-          if (rank === 1) {
-            emoji = '🏆';
-            rankClass = 'rank-1';
-            motivationText = 'Luar biasa! Anda adalah Juara 1 di kelas! Pertahankan prestasimu! 🥇';
-          } else if (rank === 2) {
-            emoji = '🥈';
-            rankClass = 'rank-2';
-            motivationText = 'Keren sekali! Anda menempati peringkat 2 kelas! Kejar peringkat 1! 🚀';
-          } else if (rank === 3) {
-            emoji = '🥉';
-            rankClass = 'rank-3';
-            motivationText = 'Hebat! Anda berada di peringkat 3 kelas! Tingkatkan kemampuanmu! 🛠️';
-          } else {
-            emoji = '🏅';
-            rankClass = '';
-            if (rank <= 10) {
+    // Fetch leaderboard to append Rank slide if online & synced
+    let playerRankData = null;
+    if (navigator.onLine && typeof SyncManager !== 'undefined' && SyncManager._getApiUrl()) {
+      try {
+        const res = await SyncManager.getLeaderboard('all');
+        if (res.success && res.data && Array.isArray(res.data.entries)) {
+          const entries = res.data.entries;
+          const totalStudents = entries.length;
+          const playerIndex = entries.findIndex(player => String(player.nis) === String(currentNis));
+          if (playerIndex !== -1) {
+            const rank = playerIndex + 1;
+            let emoji = '🏅';
+            let motivationText = '';
+            if (rank === 1) {
+              emoji = '🏆';
+              motivationText = 'Luar biasa! Anda adalah Juara 1 di kelas! Pertahankan prestasimu! 🥇';
+            } else if (rank === 2) {
+              emoji = '🥈';
+              motivationText = 'Keren sekali! Anda menempati peringkat 2 kelas! Kejar peringkat 1! 🚀';
+            } else if (rank === 3) {
+              emoji = '🥉';
+              motivationText = 'Hebat! Anda berada di peringkat 3 kelas! Tingkatkan kemampuanmu! 🛠️';
+            } else if (rank <= 10) {
               motivationText = `Mantap! Anda masuk Top 10 besar kelas (Peringkat ${rank} dari ${totalStudents} siswa). 🌟`;
             } else {
               motivationText = `Peringkat ${rank} dari ${totalStudents} siswa. Terus kumpulkan XP untuk naik peringkat! 💪`;
             }
-          }
-          
-          bannerEl.className = `ranking-banner-container ${rankClass}`;
-          bannerEl.innerHTML = `
-            <div class="ranking-banner-content">
-              <div class="ranking-banner-icon">${emoji}</div>
-              <div class="ranking-banner-info">
-                <div class="ranking-banner-title">Peringkat Kelas: Ke-${rank} dari ${totalStudents} Siswa</div>
-                <div class="ranking-banner-desc">${motivationText}</div>
-              </div>
-            </div>
-            <div class="ranking-banner-action">
-              <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🏆 Papan Skor</button>
-            </div>
-          `;
-          
-          // Bind click event to the newly rendered button
-          const btn = document.getElementById('btn-banner-leaderboard');
-          if (btn) {
-            btn.addEventListener('click', () => {
-              this.showScreen('scores');
-            });
-          }
-        } else {
-          // Player is logged in but has no scores/XP synced yet (or not in leaderboard)
-          bannerEl.innerHTML = `
-            <div class="ranking-banner-content">
-              <div class="ranking-banner-icon">🎯</div>
-              <div class="ranking-banner-info">
-                <div class="ranking-banner-title">Belum Masuk Peringkat</div>
-                <div class="ranking-banner-desc">Selesaikan materi kuis di menu "Peta Bengkel" untuk mencatatkan nilai Anda!</div>
-              </div>
-            </div>
-            <div class="ranking-banner-action">
-              <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🗺️ Mulai Ujian</button>
-            </div>
-          `;
-          
-          const btn = document.getElementById('btn-banner-leaderboard');
-          if (btn) {
-            btn.addEventListener('click', () => {
-              this.showScreen('map');
-            });
+            playerRankData = {
+              icon: getBannerIconSvg('peringkat'),
+              title: `Live Rank: Ke-${rank} dari ${totalStudents} Siswa`,
+              desc: motivationText,
+              btnText: "Papan Skor 🏆",
+              btnAction: () => this.showScreen('scores')
+            };
           }
         }
-      } else {
-        // No leaderboard entries in server yet
-        bannerEl.innerHTML = `
-          <div class="ranking-banner-content">
-            <div class="ranking-banner-icon">🏁</div>
-            <div class="ranking-banner-info">
-              <div class="ranking-banner-title">Mulai Kompetisi Kelas!</div>
-              <div class="ranking-banner-desc">Belum ada siswa yang menyinkronkan nilai. Jadilah yang pertama di papan peringkat!</div>
-            </div>
+      } catch (err) {
+        console.warn('[App] Could not fetch live rank for banner slider:', err);
+      }
+    }
+
+    if (playerRankData) {
+      slides.push(playerRankData);
+    }
+
+    // Render slider layout inside bannerEl
+    bannerEl.style.display = 'block';
+    bannerEl.className = 'ranking-banner-container banner-slider-active';
+    bannerEl.innerHTML = `
+      <div class="banner-slide-wrapper">
+        <div class="ranking-banner-content banner-fade-slide" id="ranking-banner-slide-area">
+          <div class="ranking-banner-icon">${slides[0].icon}</div>
+          <div class="ranking-banner-info">
+            <div class="ranking-banner-title">${slides[0].title}</div>
+            <div class="ranking-banner-desc">${slides[0].desc}</div>
           </div>
-          <div class="ranking-banner-action">
-            <button type="button" id="btn-banner-leaderboard" class="ranking-banner-btn">🗺️ Mulai Belajar</button>
+        </div>
+        <div class="ranking-banner-action" id="ranking-banner-action-area">
+          <button type="button" class="ranking-banner-btn">${slides[0].btnText}</button>
+        </div>
+      </div>
+      <div class="banner-slider-dots" id="banner-slider-dots-area">
+        ${slides.map((_, i) => `<span class="banner-slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
+      </div>
+    `;
+
+    // Bind action to initial slide button
+    const initBtn = bannerEl.querySelector('.ranking-banner-btn');
+    if (initBtn) {
+      initBtn.addEventListener('click', slides[0].btnAction);
+    }
+
+    // Set up slider logic variables
+    let activeIdx = 0;
+    const slideArea = document.getElementById('ranking-banner-slide-area');
+    const actionArea = document.getElementById('ranking-banner-action-area');
+    const dotsArea = document.getElementById('banner-slider-dots-area');
+
+    const changeSlide = (idx) => {
+      activeIdx = idx;
+      if (!slideArea || !actionArea) return;
+      
+      // Transition out
+      slideArea.classList.add('fade-slide-out');
+      actionArea.classList.add('fade-slide-out');
+
+      setTimeout(() => {
+        const slide = slides[activeIdx];
+        slideArea.innerHTML = `
+          <div class="ranking-banner-icon">${slide.icon}</div>
+          <div class="ranking-banner-info">
+            <div class="ranking-banner-title">${slide.title}</div>
+            <div class="ranking-banner-desc">${slide.desc}</div>
           </div>
         `;
+        actionArea.innerHTML = `<button type="button" class="ranking-banner-btn">${slide.btnText}</button>`;
         
-        const btn = document.getElementById('btn-banner-leaderboard');
+        const btn = actionArea.querySelector('.ranking-banner-btn');
         if (btn) {
-          btn.addEventListener('click', () => {
-            this.showScreen('map');
+          btn.addEventListener('click', slide.btnAction);
+        }
+
+        // Update active dot
+        if (dotsArea) {
+          dotsArea.querySelectorAll('.banner-slider-dot').forEach((dot, dotIdx) => {
+            if (dotIdx === activeIdx) dot.classList.add('active');
+            else dot.classList.remove('active');
           });
         }
-      }
-    } catch (err) {
-      console.error('[App] Error rendering ranking banner:', err);
-      bannerEl.style.display = 'none';
+
+        // Transition back in
+        slideArea.classList.remove('fade-slide-out');
+        actionArea.classList.remove('fade-slide-out');
+      }, 300);
+    };
+
+    // Bind dots click listener
+    if (dotsArea) {
+      dotsArea.addEventListener('click', (e) => {
+        const dot = e.target.closest('.banner-slider-dot');
+        if (dot) {
+          const targetIdx = parseInt(dot.dataset.index);
+          if (!isNaN(targetIdx) && targetIdx !== activeIdx) {
+            changeSlide(targetIdx);
+          }
+        }
+      });
     }
+
+    // Start auto slide rotation
+    if (this.bannerInterval) {
+      clearInterval(this.bannerInterval);
+    }
+    this.bannerInterval = setInterval(() => {
+      const nextIdx = (activeIdx + 1) % slides.length;
+      changeSlide(nextIdx);
+    }, 5500); // changes every 5.5 seconds
   },
 
   // ════════════════════════════════════════════════════════════
