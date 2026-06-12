@@ -9,8 +9,26 @@
  * ============================================================
  * FILE INI HARUS DIMUAT TERAKHIR setelah:
  *   data.js → progress.js → quiz.js → simulation.js → app.js
- * ============================================================
- */
+// ── FAILSAFE AUDIOMANAGER ────────────────────────────────────
+// Jika js/audio.js gagal dimuat (misal: belum diunggah atau 404),
+// buat objek dummy agar aplikasi tidak crash saat diakses.
+if (typeof AudioManager === 'undefined') {
+  window.AudioManager = {
+    bgmVolume: 0.3,
+    sfxVolume: 0.5,
+    isBgmMuted: true,
+    isSfxMuted: true,
+    init() {},
+    playBGM() {},
+    pauseBGM() {},
+    setBGMVolume() {},
+    toggleBGMMute() { return true; },
+    playSFX() {},
+    setSFXVolume() {},
+    toggleSFXMute() { return true; }
+  };
+  console.warn('⚠️ AudioManager tidak ditemukan (js/audio.js mungkin gagal dimuat). Menggunakan dummy AudioManager.');
+}
 
 const App = {
 
@@ -584,16 +602,28 @@ const App = {
     
     if (linkTeacher && studentLoginForm && formTeacher) {
       linkTeacher.addEventListener('click', () => {
+        const studentRegInfo = document.getElementById('student-reg-info');
+        const teacherRegInfo = document.getElementById('teacher-reg-info');
+        const linkForgotPassword = document.getElementById('link-forgot-password');
+        
         if (formTeacher.style.display === 'none') {
           formTeacher.style.display = 'block';
           studentLoginForm.style.display = 'none';
           linkTeacher.textContent = 'Masuk sebagai Siswa 🧑‍🔧';
           if (loginHeading) loginHeading.textContent = 'Area Guru 🧑‍🏫';
+          
+          if (studentRegInfo) studentRegInfo.style.display = 'none';
+          if (teacherRegInfo) teacherRegInfo.style.display = 'block';
+          if (linkForgotPassword) linkForgotPassword.style.display = 'none';
         } else {
           formTeacher.style.display = 'none';
           studentLoginForm.style.display = 'block';
           linkTeacher.textContent = 'Masuk sebagai Guru 🧑‍🏫';
           if (loginHeading) loginHeading.textContent = 'Masuk Mekanik';
+          
+          if (studentRegInfo) studentRegInfo.style.display = 'inline';
+          if (teacherRegInfo) teacherRegInfo.style.display = 'none';
+          if (linkForgotPassword) linkForgotPassword.style.display = 'inline-block';
         }
       });
     }
@@ -655,6 +685,35 @@ const App = {
       }
     });
 
+    // Copy Apps Script code click handler
+    this._bindClick('btn-copy-script-code', () => {
+      const textarea = document.getElementById('textarea-script-code');
+      if (textarea && textarea.value) {
+        if (textarea.value.startsWith('// Gagal')) {
+          this.showToast('⚠️ Tidak ada kode yang valid untuk disalin.', 'warning');
+          return;
+        }
+        navigator.clipboard.writeText(textarea.value)
+          .then(() => {
+            this.showToast('📋 Kode Apps Script berhasil disalin!', 'success');
+          })
+          .catch(err => {
+            console.error('Gagal menyalin kode via clipboard API:', err);
+            // Fallback selection copy
+            try {
+              textarea.select();
+              document.execCommand('copy');
+              window.getSelection().removeAllRanges(); // clear selection
+              this.showToast('📋 Kode Apps Script berhasil disalin (fallback)!', 'success');
+            } catch (fallbackErr) {
+              this.showToast('❌ Gagal menyalin kode. Silakan salin secara manual.', 'error');
+            }
+          });
+      } else {
+        this.showToast('⚠️ Kode belum siap disalin.', 'warning');
+      }
+    });
+
     // Class filter & Student search changes
     const classFilter = document.getElementById('teacher-class-filter');
     if (classFilter) {
@@ -713,6 +772,26 @@ const App = {
 
       // Scroll ke atas saat berpindah layar
       screen.scrollTop = 0;
+    }
+
+    // Reset login form to student mode when showing login screen
+    if (screenId === 'login') {
+      const studentLoginForm = document.getElementById('form-login');
+      const formTeacher = document.getElementById('form-teacher-login');
+      const linkTeacher = document.getElementById('link-to-teacher-login');
+      const loginCard = document.querySelector('#screen-login .auth-card');
+      const loginHeading = loginCard ? loginCard.querySelector('h2') : null;
+      const studentRegInfo = document.getElementById('student-reg-info');
+      const teacherRegInfo = document.getElementById('teacher-reg-info');
+      const linkForgotPassword = document.getElementById('link-forgot-password');
+
+      if (studentLoginForm) studentLoginForm.style.display = 'block';
+      if (formTeacher) formTeacher.style.display = 'none';
+      if (linkTeacher) linkTeacher.textContent = 'Masuk sebagai Guru 🧑‍🏫';
+      if (loginHeading) loginHeading.textContent = 'Masuk Mekanik';
+      if (studentRegInfo) studentRegInfo.style.display = 'inline';
+      if (teacherRegInfo) teacherRegInfo.style.display = 'none';
+      if (linkForgotPassword) linkForgotPassword.style.display = 'inline-block';
     }
   },
 
@@ -2289,6 +2368,34 @@ const App = {
     const dbUrlInput = document.getElementById('teacher-db-url');
     if (dbUrlInput) {
       dbUrlInput.value = AuthManager.API_URL;
+    }
+
+    // Load Apps Script code into the textarea
+    if (!this.appsScriptCode) {
+      fetch('google-apps-script/Code.gs')
+        .then(response => {
+          if (!response.ok) throw new Error('File Code.gs tidak dapat dimuat');
+          return response.text();
+        })
+        .then(code => {
+          this.appsScriptCode = code;
+          const textarea = document.getElementById('textarea-script-code');
+          if (textarea) {
+            textarea.value = code;
+          }
+        })
+        .catch(err => {
+          console.error('[Dashboard Guru] Gagal memuat Code.gs:', err);
+          const textarea = document.getElementById('textarea-script-code');
+          if (textarea) {
+            textarea.value = '// Gagal memuat file Code.gs secara otomatis.\n// Silakan hubungi pengembang di 085664236522 atau salin secara manual dari folder proyek Anda.';
+          }
+        });
+    } else {
+      const textarea = document.getElementById('textarea-script-code');
+      if (textarea) {
+        textarea.value = this.appsScriptCode;
+      }
     }
 
     // Populate class filter dropdown if it has only one option (default)
