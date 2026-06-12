@@ -2382,7 +2382,16 @@ a:hover { color: var(--clr-accent-light); }
   }
 
   #screen-menu {
-    padding-top: calc(var(--sp-md) + 28px);
+    padding-top: calc(var(--sp-md) + 32px) !important;
+  }
+
+  .screen-header {
+    padding-right: 85px !important;
+  }
+
+  .sync-status-indicator {
+    top: 20px !important;
+    right: 20px !important;
   }
 
   #player-info {
