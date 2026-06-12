@@ -58,8 +58,7 @@ const SwfPlayer = {
       'lib/ruffle/ruffle.js',
       'vendor/ruffle/ruffle.js',
       'js/ruffle/ruffle.js',
-      'https://unpkg.com/@nickersoft/ruffle@latest/ruffle.js',
-      'https://unpkg.com/@nickersoft/ruffle/ruffle.js'
+      'https://unpkg.com/@ruffle-rs/ruffle/ruffle.js'
     ];
 
     for (var i = 0; i < ruffleUrls.length; i++) {

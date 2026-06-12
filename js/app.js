@@ -2367,6 +2367,62 @@ const App = {
   renderTeacherDashboard(data) {
     this.teacherData = data;
     
+    // Check if any student has progress but lacks completedLevels array (outdated deployment warning)
+    let isOutdated = false;
+    if (data && data.students) {
+      for (const s of data.students) {
+        if (s.progress && typeof s.progress.completedLevels === 'undefined') {
+          isOutdated = true;
+          break;
+        }
+      }
+    }
+
+    const container = document.querySelector('.teacher-dashboard-content');
+    if (container) {
+      let warningBanner = document.getElementById('teacher-outdated-warning');
+      if (isOutdated) {
+        if (!warningBanner) {
+          warningBanner = document.createElement('div');
+          warningBanner.id = 'teacher-outdated-warning';
+          warningBanner.style.cssText = `
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.08) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+            padding: var(--sp-md, 16px);
+            border-radius: 8px;
+            margin-bottom: var(--sp-lg, 24px);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+          `;
+          container.insertBefore(warningBanner, container.firstChild);
+        }
+        warningBanner.innerHTML = `
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 1.4rem; line-height: 1; filter: drop-shadow(0 0 4px rgba(239,68,68,0.5));">⚠️</span>
+            <div>
+              <strong style="color: #fff; font-size: 0.95rem; display: block; margin-bottom: 4px;">PENTING: Versi Web App Google Apps Script Anda Belum Diperbarui!</strong>
+              <span>Dasbor mendeteksi bahwa Web App Google Apps Script Anda menjalankan kode versi lama. Akibatnya, status ketuntasan level (L1–L6) siswa tidak dapat dibaca dari spreadsheet dan semuanya muncul sebagai tanda silang merah (❌).</span>
+              <div style="margin-top: 8px; font-weight: 600; color: #fff;">Cara memperbaikinya:</div>
+              <ol style="margin: 4px 0 0 20px; padding: 0;">
+                <li>Gulir ke bawah ke bagian <strong>"Panduan Menyalin Kode Google Apps Script Backend"</strong>.</li>
+                <li>Klik tombol <strong>"Salin Kode gs ke Clipboard"</strong>.</li>
+                <li>Buka editor Apps Script Anda di Google Drive, hapus semua kode lama, dan tempel kode baru tersebut.</li>
+                <li>Klik tombol <strong>Deploy</strong> di kanan atas → pilih <strong>Manage Deployments</strong>.</li>
+                <li>Klik ikon <strong>Pensil (Edit)</strong> di sebelah deployment aktif Anda, lalu ubah opsi <strong>Version</strong> menjadi <strong>"New Version" (Versi Baru)</strong>.</li>
+                <li>Klik <strong>Deploy</strong>, lalu salin URL Web App yang baru ke kolom di bawah ini dan klik Simpan.</li>
+              </ol>
+            </div>
+          </div>
+        `;
+      } else {
+        if (warningBanner) {
+          warningBanner.remove();
+        }
+      }
+    }
+    
     // Set database URL input
     const dbUrlInput = document.getElementById('teacher-db-url');
     if (dbUrlInput) {

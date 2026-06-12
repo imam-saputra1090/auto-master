@@ -21,26 +21,175 @@ const AudioManager = {
   // ── Daftar Aset Audio (Lokal -> CDN Cadangan) ────────────────
   bgmAset: [
     'audio/bgm.mp3',
-    'https://assets.mixkit.co/music/preview/mixkit-retro-arcade-150.mp3'
+    'https://raw.githubusercontent.com/mdn/webaudio-examples/master/audio-param/viper.mp3'
   ],
 
   sfxAset: {
     click: [
       'audio/click.mp3',
-      'https://assets.mixkit.co/sfx/preview/mixkit-simple-click-3058.mp3'
+      'https://raw.githubusercontent.com/scottschiller/SoundManager2/master/demo/_mp3/click-low.mp3'
     ],
     correct: [
       'audio/correct.mp3',
-      'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3'
+      'https://raw.githubusercontent.com/techieshruti/Quiz-App-with-Timer/master/sounds/correct.mp3'
     ],
     wrong: [
       'audio/wrong.mp3',
-      'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'
+      'https://raw.githubusercontent.com/techieshruti/Quiz-App-with-Timer/master/sounds/wrong.mp3'
     ],
     victory: [
       'audio/victory.mp3',
-      'https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3'
+      'https://raw.githubusercontent.com/scottschiller/SoundManager2/master/demo/_mp3/button-1.mp3'
     ]
+  },
+
+  // ── Web Audio Synth Fallback (Offline & Zero-Asset) ──────────
+  ctx: null,
+  synthBgmGain: null,
+  bgmInterval: null,
+  bgmCurrentNote: 0,
+
+  initSynth() {
+    if (this.ctx) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      this.ctx = new AudioContextClass();
+    }
+  },
+
+  playSynthSFX(sfxName) {
+    try {
+      this.initSynth();
+      if (!this.ctx) return;
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+
+      const time = this.ctx.currentTime;
+      const vol = this.sfxVolume;
+
+      if (sfxName === 'click') {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, time);
+        osc.frequency.exponentialRampToValueAtTime(80, time + 0.04);
+        gain.gain.setValueAtTime(vol * 0.15, time);
+        gain.gain.linearRampToValueAtTime(0.01, time + 0.04);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(time);
+        osc.stop(time + 0.04);
+      } else if (sfxName === 'correct') {
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(523.25, time); // C5
+        osc1.frequency.setValueAtTime(659.25, time + 0.08); // E5
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(783.99, time + 0.16); // G5
+        gain.gain.setValueAtTime(vol * 0.25, time);
+        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.4);
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc1.start(time);
+        osc1.stop(time + 0.4);
+        osc2.start(time + 0.16);
+        osc2.stop(time + 0.4);
+      } else if (sfxName === 'wrong') {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, time); // A3
+        osc.frequency.linearRampToValueAtTime(110, time + 0.3); // A2
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(600, time);
+        gain.gain.setValueAtTime(vol * 0.2, time);
+        gain.gain.linearRampToValueAtTime(0.01, time + 0.3);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(time);
+        osc.stop(time + 0.3);
+      } else if (sfxName === 'victory') {
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        const durations = [0.1, 0.1, 0.1, 0.35];
+        const starts = [0, 0.1, 0.2, 0.3];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, time + starts[idx]);
+          gain.gain.setValueAtTime(vol * 0.1, time + starts[idx]);
+          gain.gain.exponentialRampToValueAtTime(0.005, time + starts[idx] + durations[idx]);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(time + starts[idx]);
+          osc.stop(time + starts[idx] + durations[idx]);
+        });
+      }
+    } catch (e) {
+      console.warn('[AudioManager] Gagal memainkan synth SFX:', e);
+    }
+  },
+
+  playSynthBGM() {
+    try {
+      this.initSynth();
+      if (!this.ctx || this.bgmInterval || this.isBgmMuted) return;
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+
+      const melody = [
+        261.63, 329.63, 392.00, 329.63, // C E G E
+        293.66, 349.23, 440.00, 349.23, // D F A F
+        329.63, 392.00, 493.88, 392.00, // E G B G
+        349.23, 440.00, 523.25, 440.00  // F A C A
+      ];
+      
+      const tempo = 250;
+      this.bgmCurrentNote = 0;
+      this.synthBgmGain = this.ctx.createGain();
+      this.synthBgmGain.gain.setValueAtTime(this.bgmVolume * 0.05, this.ctx.currentTime);
+      this.synthBgmGain.connect(this.ctx.destination);
+
+      this.bgmInterval = setInterval(() => {
+        if (this.isBgmMuted || this.ctx.state === 'suspended') return;
+        
+        try {
+          const time = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(melody[this.bgmCurrentNote], time);
+          osc.connect(this.synthBgmGain);
+          osc.start(time);
+          osc.stop(time + 0.23);
+          this.bgmCurrentNote = (this.bgmCurrentNote + 1) % melody.length;
+        } catch (err) {
+          // ignore
+        }
+      }, tempo);
+      console.log('🎵 Retro BGM Synth dinyalakan.');
+    } catch (e) {
+      console.warn('[AudioManager] Gagal memainkan synth BGM:', e);
+    }
+  },
+
+  stopSynthBGM() {
+    if (this.bgmInterval) {
+      clearInterval(this.bgmInterval);
+      this.bgmInterval = null;
+    }
+    if (this.synthBgmGain) {
+      try {
+        this.synthBgmGain.disconnect();
+      } catch (e) {}
+      this.synthBgmGain = null;
+    }
   },
 
   // ════════════════════════════════════════════════════════════
@@ -120,7 +269,8 @@ const AudioManager = {
           });
         }
       } else {
-        console.error('[AudioManager] Semua alternatif pemuatan file audio gagal.');
+        console.error('[AudioManager] Semua alternatif pemuatan file audio gagal. Beralih ke Web Audio Synth.');
+        audioElement.failedToLoad = true;
       }
     }, true);
   },
@@ -134,12 +284,24 @@ const AudioManager = {
     this.init(); // Pastikan telah diinisialisasi
     if (!this.bgmAudio || this.isBgmMuted) return;
 
+    if (this.bgmAudio.failedToLoad) {
+      this.playSynthBGM();
+      return;
+    }
+
     this.bgmAudio.play().catch(err => {
       console.log('[AudioManager] Autoplay musik tertunda, menunggu interaksi pengguna.');
       // Pasang sekali listener klik pada dokumen untuk memulai BGM
       const startOnInteraction = () => {
         if (this.bgmAudio && !this.isBgmMuted) {
-          this.bgmAudio.play().catch(e => console.warn(e));
+          if (this.bgmAudio.failedToLoad) {
+            this.playSynthBGM();
+          } else {
+            this.bgmAudio.play().catch(e => {
+              console.warn('[AudioManager] Gagal memutar BGM, menggunakan Synth fallback.', e);
+              this.playSynthBGM();
+            });
+          }
         }
         document.removeEventListener('click', startOnInteraction);
         document.removeEventListener('keydown', startOnInteraction);
@@ -154,6 +316,7 @@ const AudioManager = {
     if (this.bgmAudio) {
       this.bgmAudio.pause();
     }
+    this.stopSynthBGM();
   },
 
   /** Set Volume BGM (0.0 sampai 1.0) */
@@ -163,6 +326,9 @@ const AudioManager = {
     
     if (this.bgmAudio && !this.isBgmMuted) {
       this.bgmAudio.volume = this.bgmVolume;
+    }
+    if (this.synthBgmGain) {
+      this.synthBgmGain.gain.setValueAtTime(this.bgmVolume * 0.05, this.ctx ? this.ctx.currentTime : 0);
     }
   },
 
@@ -175,6 +341,7 @@ const AudioManager = {
       this.bgmAudio.volume = this.isBgmMuted ? 0 : this.bgmVolume;
       if (this.isBgmMuted) {
         this.bgmAudio.pause();
+        this.stopSynthBGM();
       } else {
         this.playBGM();
       }
@@ -193,12 +360,20 @@ const AudioManager = {
 
     const audio = this.sfxCache[sfxName];
     if (audio) {
+      if (audio.failedToLoad) {
+        this.playSynthSFX(sfxName);
+        return;
+      }
       // Reset pemutaran ke awal jika sedang diputar
       audio.currentTime = 0;
       audio.volume = this.sfxVolume;
       audio.play().catch(err => {
-        // Abaikan error autoplay browser pada SFX
+        // Fallback ke synth jika play() diblokir atau gagal
+        console.warn(`[AudioManager] Gagal memutar SFX ${sfxName}, mencoba Synth fallback.`, err);
+        this.playSynthSFX(sfxName);
       });
+    } else {
+      this.playSynthSFX(sfxName);
     }
   },
 
