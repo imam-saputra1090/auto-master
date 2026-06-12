@@ -2381,16 +2381,80 @@ a:hover { color: var(--clr-accent-light); }
     font-size: 0.6rem;
   }
 
+  #screen-menu {
+    padding-top: calc(var(--sp-md) + 28px);
+  }
+
   #player-info {
-    flex-wrap: wrap;
-    gap: var(--sp-sm);
-    padding: var(--sp-sm) var(--sp-md);
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "avatar details"
+      "stars details"
+      "actions actions";
+    gap: var(--sp-xs) var(--sp-sm);
+    padding: var(--sp-md);
+    align-items: center;
+  }
+
+  .player-avatar {
+    grid-area: avatar;
+    width: 48px;
+    height: 48px;
+    justify-self: center;
+  }
+
+  .player-stars {
+    grid-area: stars;
+    justify-self: center;
+    margin-right: 0 !important;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  .player-details {
+    grid-area: details;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .player-name-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+
+  .player-school {
+    margin-top: 1px;
+    font-size: 0.7rem !important;
   }
 
   .xp-bar-container {
-    max-width: 100%;
-    flex-basis: 100%;
-    order: 3;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 4px !important;
+  }
+
+  .player-actions {
+    grid-area: actions;
+    display: flex;
+    gap: var(--sp-sm);
+    width: 100%;
+    margin-top: var(--sp-xs);
+    margin-left: 0;
+  }
+
+  .player-actions .btn-action {
+    flex: 1;
+    justify-content: center;
+    padding: 8px var(--sp-sm);
+    font-size: 0.8rem;
   }
 
   .menu-grid {
