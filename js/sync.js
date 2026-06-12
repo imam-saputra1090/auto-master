@@ -337,7 +337,7 @@ const SyncManager = {
     }
 
     try {
-      const url = apiUrl + '?action=leaderboard&level=' + encodeURIComponent(levelId);
+      const url = apiUrl + '?action=leaderboard&level=' + encodeURIComponent(levelId) + '&limit=100';
       const response = await fetch(url, {
         method: 'GET',
         mode: 'cors'
