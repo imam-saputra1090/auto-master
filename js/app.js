@@ -174,6 +174,12 @@ const App = {
           const res = await AuthManager.login(nis, pass);
           if (res.success) {
             this.showToast(`🎉 ${res.message}`, 'success');
+            
+            // Clear any dirty local storage progress from previous user before loading new progress
+            if (typeof ProgressManager !== 'undefined' && typeof ProgressManager.resetProgress === 'function') {
+              ProgressManager.resetProgress();
+            }
+            
             ProgressManager.setPlayerName(res.data.nama);
             this.showScreen('menu');
             this.updatePlayerInfo();

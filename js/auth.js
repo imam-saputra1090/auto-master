@@ -317,6 +317,11 @@ const AuthManager = {
       console.warn('[AuthManager] Failed to clear session from storage:', e);
     }
 
+    // Clear local progress in localStorage on logout so next login is clean
+    if (typeof ProgressManager !== 'undefined' && typeof ProgressManager.resetProgress === 'function') {
+      ProgressManager.resetProgress();
+    }
+
     // Notify the app if available
     if (typeof App !== 'undefined' && App && typeof App.showScreen === 'function') {
       App.showScreen('login');
