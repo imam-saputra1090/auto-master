@@ -54,7 +54,7 @@ const App = {
       console.log('🔄 Memulai inisialisasi AutoMaster...');
 
       // Cek dan terapkan tema tampilan (Terang/Gelap)
-      const savedTheme = localStorage.getItem('automaster_theme') || 'dark';
+      const savedTheme = localStorage.getItem('automaster_theme') || 'light';
       if (savedTheme === 'light') {
         document.body.classList.add('light-theme');
       }
@@ -661,7 +661,7 @@ const App = {
           }
         } catch (err) {
           console.error(err);
-          this.showToast('❌ Gagal menghubungi server database.', 'error');
+          this.showToast('❌ Gagal menghubungi server database. Pastikan URL Web App Google Apps Script Anda benar, sudah dideploy sebagai "Anyone", dan telah menyetujui izin akses (Authorize).', 'error', 7000);
         }
       });
     }
@@ -739,6 +739,19 @@ const App = {
         AudioManager.playSFX('click');
       }
     });
+
+    // Global bottom navigation bar bindings
+    const bottomNav = document.getElementById('global-bottom-nav');
+    if (bottomNav) {
+      bottomNav.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const targetScreen = item.getAttribute('data-screen');
+          if (targetScreen) {
+            this.showScreen(targetScreen);
+          }
+        });
+      });
+    }
   },
 
   /**
@@ -2360,7 +2373,8 @@ const App = {
         this.showToast(`❌ ${res.message}`, 'error');
       }
     } catch (e) {
-      this.showToast('❌ Gagal menyinkronkan data.', 'error');
+      console.error('[Dashboard Guru] Gagal refresh data:', e);
+      this.showToast('❌ Gagal menyinkronkan data. Pastikan URL Web App Google Apps Script Anda benar, sudah dideploy sebagai "Anyone", dan telah menyetujui izin akses (Authorize).', 'error', 7000);
     }
   },
 
