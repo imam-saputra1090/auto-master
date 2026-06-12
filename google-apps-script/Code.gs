@@ -293,7 +293,32 @@ function handleLogin_(body) {
   
   // --- Verify password ---
   var passwordHash = hashSHA256_(password);
-  if (user.passwordHash !== passwordHash) {
+  var storedPassword = user.passwordHash;
+  
+  // A SHA-256 hash is exactly 64 characters long and contains only hex chars
+  var isHash = /^[0-9a-f]{64}$/i.test(storedPassword);
+  var passwordCorrect = false;
+  
+  if (isHash) {
+    passwordCorrect = (storedPassword === passwordHash);
+  } else {
+    // If teacher set a plain password in spreadsheet
+    passwordCorrect = (storedPassword === password);
+    
+    // Auto-hash the plain password and save it back to protect it!
+    if (passwordCorrect) {
+      var data = usersSheet.getDataRange().getValues();
+      var nisStr = parseNis_(nis);
+      for (var i = 1; i < data.length; i++) {
+        if (parseNis_(data[i][0]) === nisStr) {
+          usersSheet.getRange(i + 1, 5).setValue(passwordHash); // Column 5 is PasswordHash (E)
+          break;
+        }
+      }
+    }
+  }
+  
+  if (!passwordCorrect) {
     return makeResponse_(false, "Password salah", null);
   }
   
@@ -429,7 +454,8 @@ function handleUpdateProfile_(body) {
     return makeResponse_(false, "NIS dan nama wajib diisi", null);
   }
   
-  if (!/^\d{4,20}$/.test(nis)) {
+  var nisStr = parseNis_(nis);
+  if (!nisStr) {
     return makeResponse_(false, "NIS tidak valid", null);
   }
   
@@ -438,7 +464,7 @@ function handleUpdateProfile_(body) {
   }
   
   var usersSheet = getSheet_("users");
-  var user = findUserByNIS_(usersSheet, nis);
+  var user = findUserByNIS_(usersSheet, nisStr);
   
   if (!user) {
     return makeResponse_(false, "User tidak ditemukan", null);
@@ -446,11 +472,10 @@ function handleUpdateProfile_(body) {
   
   // Update name in users sheet
   var data = usersSheet.getDataRange().getValues();
-  var nisStr = String(nis).trim();
   var updated = false;
   
   for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]).trim() === nisStr) {
+    if (parseNis_(data[i][0]) === nisStr) {
       usersSheet.getRange(i + 1, 2).setValue(nama); // Column 2 is Nama
       updated = true;
       break;
@@ -465,7 +490,7 @@ function handleUpdateProfile_(body) {
   var scoresSheet = getSheet_("scores");
   var scoresData = scoresSheet.getDataRange().getValues();
   for (var j = 1; j < scoresData.length; j++) {
-    if (String(scoresData[j][0]).trim() === nisStr) {
+    if (parseNis_(scoresData[j][0]) === nisStr) {
       scoresSheet.getRange(j + 1, 2).setValue(nama);
     }
   }
@@ -484,18 +509,15 @@ function handleUpdateProfile_(body) {
  */
 function handleGetProgress_(params) {
   var nis = sanitize_(params.nis);
+  var nisStr = parseNis_(nis);
   
-  if (!nis) {
+  if (!nisStr) {
     return makeResponse_(false, "Parameter nis wajib diisi", null);
-  }
-  
-  if (!/^\d{4,20}$/.test(nis)) {
-    return makeResponse_(false, "NIS tidak valid", null);
   }
   
   // Verify user exists
   var usersSheet = getSheet_("users");
-  var user = findUserByNIS_(usersSheet, nis);
+  var user = findUserByNIS_(usersSheet, nisStr);
   
   if (!user) {
     return makeResponse_(false, "NIS tidak ditemukan", null);
@@ -511,7 +533,7 @@ function handleGetProgress_(params) {
   var levelsCompleted = {};
   
   for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]).trim() === nis) {
+    if (parseNis_(data[i][0]) === nisStr) {
       var entry = {
         level: String(data[i][2]),
         phase: String(data[i][3]),
@@ -573,8 +595,8 @@ function handleLeaderboard_(params) {
     var stars = Number(data[i][5]) || 0;
     var xp = Number(data[i][6]) || 0;
     
-    // Apply level filter if specified
-    if (levelFilter && level !== levelFilter) {
+    // Apply level filter if specified (skip if levelFilter is "all")
+    if (levelFilter && levelFilter !== "all" && level !== levelFilter) {
       continue;
     }
     
@@ -716,13 +738,13 @@ function getSheet_(name) {
  */
 function findUserByNIS_(sheet, nis) {
   var data = sheet.getDataRange().getValues();
-  var nisStr = String(nis).trim();
+  var nisStr = parseNis_(nis);
   
   for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]).trim() === nisStr) {
+    if (parseNis_(data[i][0]) === nisStr) {
       return {
         rowNumber: i + 1,
-        nis: String(data[i][0]).trim(),
+        nis: parseNis_(data[i][0]),
         nama: String(data[i][1]).trim(),
         kelas: String(data[i][2]).trim(),
         wa: String(data[i][3]).trim(),
@@ -740,17 +762,17 @@ function findUserByNIS_(sheet, nis) {
  */
 function findScoreRow_(sheet, nis, level, phase) {
   var data = sheet.getDataRange().getValues();
-  var nisStr = String(nis).trim();
+  var nisStr = parseNis_(nis);
   var levelStr = String(level).trim();
   var phaseStr = String(phase).trim();
   
   for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]).trim() === nisStr &&
+    if (parseNis_(data[i][0]) === nisStr &&
         String(data[i][2]).trim() === levelStr &&
         String(data[i][3]).trim() === phaseStr) {
       return {
         rowNumber: i + 1,
-        nis: String(data[i][0]).trim(),
+        nis: parseNis_(data[i][0]),
         nama: String(data[i][1]).trim(),
         level: String(data[i][2]).trim(),
         phase: String(data[i][3]).trim(),
@@ -781,10 +803,10 @@ function getProgressSummary_(nis) {
   var totalStars = 0;
   var totalXP = 0;
   var levels = {};
-  var nisStr = String(nis).trim();
+  var nisStr = parseNis_(nis);
   
   for (var i = 1; i < data.length; i++) {
-    if (String(data[i][0]).trim() === nisStr) {
+    if (parseNis_(data[i][0]) === nisStr) {
       totalScore += Number(data[i][4]) || 0;
       totalStars += Number(data[i][5]) || 0;
       totalXP += Number(data[i][6]) || 0;
@@ -798,6 +820,18 @@ function getProgressSummary_(nis) {
     totalXP: totalXP,
     levelsCompleted: Object.keys(levels).length
   };
+}
+
+/**
+ * Parse NIS to a clean numeric string (strips decimals, non-digits)
+ */
+function parseNis_(val) {
+  if (val === null || val === undefined) return "";
+  var str = String(val).trim();
+  if (str.indexOf('.') !== -1) {
+    str = str.split('.')[0];
+  }
+  return str.replace(/\D/g, "");
 }
 
 /**
