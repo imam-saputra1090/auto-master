@@ -3768,5 +3768,155 @@ body.light-theme .settings-field input[type="text"][readonly] {
   }
 }
 
+/* ── Peringkat Kelas Banner ──────────────────────────────────── */
+.ranking-banner-container {
+  margin: var(--sp-sm) var(--sp-lg);
+  padding: var(--sp-md) var(--sp-lg);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 195, 0, 0.06) 100%);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-md);
+  box-shadow: var(--shadow-sm);
+  animation: fadeSlideIn 0.5s ease forwards;
+}
+
+body.light-theme .ranking-banner-container {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.06) 0%, rgba(255, 195, 0, 0.04) 100%);
+  border: 1px solid rgba(255, 107, 53, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.ranking-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+}
+
+.ranking-banner-icon {
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ranking-banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ranking-banner-title {
+  font-family: var(--ff-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.ranking-banner-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.ranking-banner-action {
+  flex-shrink: 0;
+}
+
+.ranking-banner-btn {
+  background: var(--clr-primary);
+  color: #fff !important;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-family: var(--ff-heading);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-glow-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ranking-banner-btn:hover {
+  background: var(--clr-primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+}
+
+/* Gold Rank 1 */
+.ranking-banner-container.rank-1 {
+  background: linear-gradient(135deg, rgba(255, 195, 0, 0.16) 0%, rgba(255, 195, 0, 0.06) 100%);
+  border: 1px solid rgba(255, 195, 0, 0.4);
+  box-shadow: 0 0 15px rgba(255, 195, 0, 0.1);
+}
+body.light-theme .ranking-banner-container.rank-1 {
+  background: linear-gradient(135deg, rgba(255, 195, 0, 0.08) 0%, rgba(255, 195, 0, 0.03) 100%);
+  border: 1px solid rgba(255, 195, 0, 0.22);
+}
+
+/* Silver Rank 2 */
+.ranking-banner-container.rank-2 {
+  background: linear-gradient(135deg, rgba(200, 200, 200, 0.16) 0%, rgba(200, 200, 200, 0.06) 100%);
+  border: 1px solid rgba(200, 200, 200, 0.4);
+}
+body.light-theme .ranking-banner-container.rank-2 {
+  background: linear-gradient(135deg, rgba(200, 200, 200, 0.08) 0%, rgba(200, 200, 200, 0.03) 100%);
+  border: 1px solid rgba(200, 200, 200, 0.22);
+}
+
+/* Bronze Rank 3 */
+.ranking-banner-container.rank-3 {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.16) 0%, rgba(205, 127, 50, 0.06) 100%);
+  border: 1px solid rgba(205, 127, 50, 0.4);
+}
+body.light-theme .ranking-banner-container.rank-3 {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.08) 0%, rgba(205, 127, 50, 0.03) 100%);
+  border: 1px solid rgba(205, 127, 50, 0.22);
+}
+
+@media (max-width: 767px) {
+  .ranking-banner-container {
+    margin: var(--sp-sm) var(--sp-md);
+    padding: var(--sp-sm) var(--sp-md);
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: var(--sp-sm);
+  }
+  
+  .ranking-banner-content {
+    flex-direction: column;
+    gap: var(--sp-xs);
+  }
+  
+  .ranking-banner-icon {
+    font-size: 1.8rem;
+  }
+  
+  .ranking-banner-title {
+    font-size: 0.95rem;
+  }
+  
+  .ranking-banner-desc {
+    font-size: 0.78rem;
+  }
+  
+  .ranking-banner-action {
+    width: 100%;
+  }
+  
+  .ranking-banner-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+  }
+}
+
 
 
