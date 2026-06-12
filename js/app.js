@@ -108,7 +108,7 @@ const App = {
         this.updatePlayerInfo();
         this.syncProgressFromCloud();
       } else {
-        this.showScreen('login');
+        this.showScreen('landing');
       }
 
       // Pasang semua event listener
@@ -185,6 +185,14 @@ const App = {
 
     this._bindClick('link-to-login', () => {
       this.showScreen('login');
+    });
+
+    this._bindClick('link-to-landing-from-login', () => {
+      this.showScreen('landing');
+    });
+
+    this._bindClick('link-to-landing-from-register', () => {
+      this.showScreen('landing');
     });
 
     // Form Login Submit
@@ -286,11 +294,16 @@ const App = {
     });
     // ── Landing Screen ──
     this._bindClick('btn-start', () => {
-      this.showModal('modal-name');
-      // Fokus ke input nama
-      const inputName = document.getElementById('input-name');
-      if (inputName) {
-        setTimeout(() => inputName.focus(), 300);
+      if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+        const session = AuthManager.getSession();
+        if (session && session.nama) {
+          ProgressManager.setPlayerName(session.nama);
+        }
+        this.showScreen('menu');
+        this.updatePlayerInfo();
+        this.syncProgressFromCloud();
+      } else {
+        this.showScreen('login');
       }
     });
 
@@ -2009,7 +2022,7 @@ const App = {
             SyncManager.flushQueue();
           }
           AuthManager.logout();
-          this.showScreen('login');
+          this.showScreen('landing');
           this.showToast('👋 Berhasil keluar.', 'info');
         }
       });
@@ -2344,7 +2357,7 @@ const App = {
           SyncManager.flushQueue();
         }
         AuthManager.logout();
-        this.showScreen('login');
+        this.showScreen('landing');
         this.showToast('👋 Berhasil keluar.', 'info');
       },
       'Ya, Keluar'
