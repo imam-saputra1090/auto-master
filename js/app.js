@@ -877,9 +877,27 @@ const App = {
       xpDisplay = `${data.totalXP} XP (MAX)`;
     }
 
+    // List slogan motivasi otomotif
+    const slogans = [
+      "Mekanik Juara: Teliti, Disiplin, dan Utamakan K3! 🥽",
+      "Kerja Keras & Presisi: Kunci Sukses Diagnosa Kerusakan! 🛠️",
+      "Ayo, jadilah yang pertama merajai Papan Skor kelas! 🏆",
+      "Budaya 5R (Ringkas, Rapi, Resik, Rawat, Rajin) cermin mekanik hebat! 🏁",
+      "Setiap kegagalan di kuis adalah langkah menuju pemahaman ahli! ⚡",
+      "Keadaan darurat? Tenang, ingat langkah evakuasi & penggunaan APAR! 🚨",
+      "Siklus 4-tak: Hisap, Kompresi, Usaha, Buang. Hidupkan semangatmu! 🔥",
+      "Rem yang pakem dimulai dari bleeding minyak rem yang sempurna! 🔴",
+      "Kelistrikan bodi stabil, performa berkendara semakin mantap! ⚡"
+    ];
+    const sloganIndex = (data.totalXP + (data.playerName || '').length) % slogans.length;
+    const currentSlogan = slogans[sloganIndex];
+
     playerInfoEl.innerHTML = `
-      <div class="player-avatar" id="header-avatar" style="cursor: pointer;" title="Ubah Profil">${data.avatar || '🧑‍🔧'}</div>
-      <div class="player-details">
+      <div class="player-avatar-wrapper" style="grid-area: avatar; position: relative;">
+        <div class="avatar-ring"></div>
+        <div class="player-avatar" id="header-avatar" style="cursor: pointer; position: relative; z-index: 2;" title="Ubah Profil">${data.avatar || '🧑‍🔧'}</div>
+      </div>
+      <div class="player-details" style="grid-area: details;">
         <div class="player-name-row" style="display: flex; align-items: baseline; gap: 8px;">
           <div class="player-name">${data.playerName || 'Pemain'}</div>
           <div class="player-school" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">(${data.sekolah || 'SMK Amal Bakti Jatimulyo'})</div>
@@ -889,14 +907,20 @@ const App = {
           <span class="player-rank">${rank.name || 'Pemula'}</span>
         </div>
         <div class="xp-bar-container" style="margin-top: 4px;">
-          <div class="xp-bar" style="width: ${xpProgress}%"></div>
+          <div class="xp-bar">
+            <div class="xp-bar-fill" id="xp-bar-fill" style="width: ${xpProgress}%;"></div>
+          </div>
         </div>
         <div class="xp-text">${xpDisplay}</div>
       </div>
-      <div class="player-stars" style="margin-right: 15px;">⭐ ${stats.totalStars}</div>
-      <div class="player-actions">
+      <div class="player-stars" style="grid-area: stars; margin-right: 15px;">⭐ ${stats.totalStars}</div>
+      <div class="player-actions" style="grid-area: actions;">
         <button id="btn-header-profile" class="btn-action" type="button" title="Edit Profil">👤 Profil</button>
         <button id="btn-header-logout" class="btn-action btn-action-danger" type="button" title="Keluar">🚪 Keluar</button>
+      </div>
+      <div class="player-motivate-slogan" style="grid-area: slogan;">
+        <span class="slogan-icon">💡</span>
+        <span class="slogan-text">${currentSlogan}</span>
       </div>
     `;
 
@@ -1085,6 +1109,81 @@ const App = {
   // ════════════════════════════════════════════════════════════
 
   /**
+   * Menghasilkan SVG custom interaktif untuk masing-masing level otomotif.
+   */
+  getLevelIconSVG(levelId) {
+    switch (levelId) {
+      case 1: // Sistem Rem
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-1">
+            <circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="6,4" class="spin-cw" />
+            <circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M 6 24 C 6 14 14 6 24 6" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" class="pulse-glow" />
+            <circle cx="24" cy="24" r="4" fill="currentColor" />
+          </svg>
+        `;
+      case 2: // Mesin Kendaraan
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-2">
+            <g class="spin-cw" style="transform-origin: 24px 24px;">
+              <circle cx="24" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="3.5" />
+              <path d="M 24 6 L 24 10 M 24 38 L 24 42 M 6 24 L 10 24 M 38 24 L 42 24 M 11.3 11.3 L 14.1 14.1 M 33.9 33.9 L 36.7 36.7 M 11.3 33.9 L 14.1 31.1 M 33.9 11.3 L 36.7 14.1" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" />
+            </g>
+            <circle cx="24" cy="24" r="6" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="24" cy="24" r="2" fill="currentColor" />
+          </svg>
+        `;
+      case 3: // Sistem Kelistrikan
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-3">
+            <path d="M 26 6 L 12 26 L 24 26 L 22 42 L 36 22 L 24 22 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" class="pulse-glow" />
+            <path d="M 26 6 L 12 26 L 24 26 L 22 42 L 36 22 L 24 22 Z" fill="currentColor" opacity="0.3" />
+          </svg>
+        `;
+      case 4: // Pemindah Tenaga
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-4">
+            <g class="spin-ccw" style="transform-origin: 24px 24px;">
+              <circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="10, 5" />
+            </g>
+            <g class="spin-cw" style="transform-origin: 24px 24px;">
+              <circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6, 4" />
+            </g>
+            <path d="M 14 24 L 34 24 M 24 14 L 24 34" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        `;
+      case 5: // Bahan Bakar & Pendingin
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-5">
+            <path d="M 12 10 L 28 10 A 4 4 0 0 1 32 14 L 32 38 A 2 2 0 0 1 30 40 L 10 40 A 2 2 0 0 1 8 38 L 8 14 A 4 4 0 0 1 12 10 Z" fill="none" stroke="currentColor" stroke-width="2.5" />
+            <circle cx="20" cy="18" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M 32 20 Q 38 22 38 28 L 38 34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            <rect x="35" y="34" width="6" height="4" fill="currentColor" />
+            <g class="spin-cw" style="transform-origin: 20px 29px;">
+              <circle cx="20" cy="29" r="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4, 2" />
+            </g>
+          </svg>
+        `;
+      case 6: // Ujian Akhir
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level svg-level-6">
+            <path d="M 12 12 L 36 12 L 34 26 C 34 32 29 36 24 36 C 19 36 14 32 14 26 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M 12 16 C 8 16 8 22 12 22 M 36 16 C 40 16 40 22 36 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M 20 36 L 20 42 M 28 36 L 28 42 M 16 42 L 32 42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            <polygon points="24,16 26,20 31,21 27,24 28,29 24,27 20,29 21,24 17,21 22,20" fill="currentColor" class="pulse-glow" />
+          </svg>
+        `;
+      default:
+        return `
+          <svg width="48" height="48" viewBox="0 0 48 48" class="svg-level">
+            <circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M 18 18 L 30 30 M 30 18 L 18 30" stroke="currentColor" stroke-width="2" />
+          </svg>
+        `;
+    }
+  },
+
+  /**
    * Merender peta level dengan semua kartu level.
    */
   renderMap() {
@@ -1131,10 +1230,20 @@ const App = {
         ProgressManager.save();
       }
 
+      // Tentukan badge status level
+      let statusBadgeHTML = '';
+      if (!finalUnlocked) {
+        statusBadgeHTML = '<span class="badge-status-level badge-locked">🔒 Terkunci</span>';
+      } else if (progress.quizCompleted) {
+        statusBadgeHTML = '<span class="badge-status-level badge-completed">🏆 Tuntas</span>';
+      } else {
+        statusBadgeHTML = '<span class="badge-status-level badge-active">🛠️ Aktif</span>';
+      }
+
       card.innerHTML = `
-        <div class="level-icon">${level.icon || '📘'}</div>
+        <div class="level-icon">${this.getLevelIconSVG(levelId)}</div>
         <div class="level-info">
-          <div class="level-number" style="font-size: 0.72rem; color: var(--clr-primary); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Level ${levelId}</div>
+          <div class="level-number" style="font-size: 0.72rem; color: var(--level-color); font-weight: 700; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Level ${levelId}</div>
           <h3 class="level-title" style="margin: 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25;">${level.title || 'Level ' + levelId}</h3>
           <p class="level-desc" style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 6px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25;">${level.description || ''}</p>
           ${finalUnlocked ? `
@@ -1148,9 +1257,12 @@ const App = {
           `}
         </div>
         <div class="level-meta">
-          ${!finalUnlocked ? '<span class="level-lock">🔒</span>' : `
+          ${statusBadgeHTML}
+          ${finalUnlocked ? `
             <div class="stars">${starsHTML}</div>
             <span class="level-progress-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block; font-weight: 500;">${completionPercent}% selesai</span>
+          ` : `
+            <span class="level-lock">🔒</span>
           `}
         </div>
       `;
