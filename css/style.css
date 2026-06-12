@@ -5358,6 +5358,256 @@ body.light-theme .level-progress-bar {
   100% { transform: rotate(360deg); }
 }
 
+/* ==========================================================================
+   INTERACTIVE GAME ROAD MAP PATHWAY & LIBRARY-STYLE LEVEL CARDS
+   ========================================================================== */
+
+/* 1. Map Grid Container & Opening Unfolding Animation */
+#screen-map .level-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 40px !important;
+  position: relative !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: var(--sp-xl) var(--sp-md) !important;
+  z-index: 1;
+}
+
+/* Opening unfold map folding transition */
+#screen-map.active .level-grid {
+  animation: unfold-map 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes unfold-map {
+  0% {
+    transform: scaleY(0.01) scaleX(0.95);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* 2. Central glowing map highway / route line */
+#screen-map .level-grid::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 40px !important;
+  bottom: 40px !important;
+  left: 50% !important;
+  width: 6px !important;
+  background: repeating-linear-gradient(to bottom, transparent, transparent 12px, var(--clr-primary) 12px, var(--clr-primary) 24px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 0 !important;
+  opacity: 0.3 !important;
+  height: 0;
+}
+
+#screen-map.active .level-grid::before {
+  animation: draw-map-path 2s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+@keyframes draw-map-path {
+  0% { height: 0; opacity: 0; }
+  100% { height: 100%; opacity: 0.45; }
+}
+
+/* 3. Library-style Level Cards */
+.level-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  padding: var(--sp-xl) var(--sp-lg) var(--sp-lg) var(--sp-lg) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-sm) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2) !important;
+  transition: all var(--transition-spring) !important;
+  transform-style: preserve-3d !important;
+  text-align: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+body.light-theme .level-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.98) 100%) !important;
+  border: 2px solid rgba(13, 148, 136, 0.15) !important;
+  box-shadow: 0 10px 20px rgba(13, 148, 136, 0.04) !important;
+}
+
+/* Level Specific Neon Borders */
+.level-card.lib-level-1 { border-color: rgba(239, 68, 68, 0.35) !important; }
+.level-card.lib-level-2 { border-color: rgba(14, 165, 233, 0.35) !important; }
+.level-card.lib-level-3 { border-color: rgba(234, 179, 8, 0.35) !important; }
+.level-card.lib-level-4 { border-color: rgba(168, 85, 247, 0.35) !important; }
+.level-card.lib-level-5 { border-color: rgba(34, 197, 94, 0.35) !important; }
+.level-card.lib-level-6 { border-color: rgba(249, 115, 22, 0.35) !important; }
+
+body.light-theme .level-card.lib-level-1 { border-color: rgba(239, 68, 68, 0.25) !important; }
+body.light-theme .level-card.lib-level-2 { border-color: rgba(14, 165, 233, 0.25) !important; }
+body.light-theme .level-card.lib-level-3 { border-color: rgba(234, 179, 8, 0.25) !important; }
+body.light-theme .level-card.lib-level-4 { border-color: rgba(168, 85, 247, 0.25) !important; }
+body.light-theme .level-card.lib-level-5 { border-color: rgba(34, 197, 94, 0.25) !important; }
+body.light-theme .level-card.lib-level-6 { border-color: rgba(249, 115, 22, 0.25) !important; }
+
+/* Level Hover box-shadows */
+.level-card.lib-level-1:hover { box-shadow: 0 18px 36px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.15) !important; }
+.level-card.lib-level-2:hover { box-shadow: 0 18px 36px rgba(14, 165, 233, 0.25), 0 0 15px rgba(14, 165, 233, 0.15) !important; }
+.level-card.lib-level-3:hover { box-shadow: 0 18px 36px rgba(234, 179, 8, 0.25), 0 0 15px rgba(234, 179, 8, 0.15) !important; }
+.level-card.lib-level-4:hover { box-shadow: 0 18px 36px rgba(59, 130, 246, 0.25), 0 0 15px rgba(59, 130, 246, 0.15) !important; }
+.level-card.lib-level-5:hover { box-shadow: 0 18px 36px rgba(168, 85, 247, 0.25), 0 0 15px rgba(168, 85, 247, 0.15) !important; }
+.level-card.lib-level-6:hover { box-shadow: 0 18px 36px rgba(16, 185, 129, 0.25), 0 0 15px rgba(16, 185, 129, 0.15) !important; }
+
+/* 4. Alternate Zigzag Node Path Layout on Desktop (min-width: 768px) */
+@media (min-width: 768px) {
+  .level-card {
+    width: 45% !important;
+    z-index: 2 !important;
+  }
+  .level-card:nth-child(odd) {
+    align-self: flex-start !important;
+  }
+  .level-card:nth-child(even) {
+    align-self: flex-end !important;
+  }
+  
+  /* Floating Glowing map pin waypoint connectors on desktop */
+  .level-card::after {
+    content: '📍' !important;
+    position: absolute !important;
+    top: 50% !important;
+    font-size: 1.6rem !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    filter: drop-shadow(0 0 5px var(--level-color)) !important;
+    animation: pin-float-anim 2s ease-in-out infinite alternate !important;
+  }
+  .level-card:nth-child(odd)::after {
+    right: -16.5% !important;
+  }
+  .level-card:nth-child(even)::after {
+    left: -16.5% !important;
+  }
+}
+
+/* Mobile responsive level layout overrides (line goes left) */
+@media (max-width: 767px) {
+  #screen-map .level-grid::before {
+    left: 24px !important;
+    transform: none !important;
+  }
+  .level-card {
+    width: calc(100% - 50px) !important;
+    margin-left: 50px !important;
+    z-index: 2 !important;
+  }
+  /* Floating map pin connectors on mobile left line */
+  .level-card::after {
+    content: '📍' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: -41px !important;
+    font-size: 1.3rem !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    filter: drop-shadow(0 0 4px var(--level-color)) !important;
+    animation: pin-float-anim 2s ease-in-out infinite alternate !important;
+  }
+}
+
+@keyframes pin-float-anim {
+  0% { transform: translateY(-50%) translateY(0); }
+  100% { transform: translateY(-50%) translateY(-6px); }
+}
+
+/* 5. Card Sub-Elements details */
+.level-card-badge {
+  position: absolute !important;
+  top: 14px !important;
+  left: 16px !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  color: var(--level-color) !important;
+  letter-spacing: 0.8px !important;
+}
+
+.level-card-graphic {
+  height: 90px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: var(--sp-xs) !important;
+}
+
+/* library-style SVGs override sizing in level map */
+.level-card-graphic svg {
+  width: 75px !important;
+  height: 75px !important;
+}
+
+.level-card-title {
+  font-size: 1.15rem !important;
+  font-weight: 850 !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 0px !important;
+}
+
+.level-card-desc {
+  font-size: 0.78rem !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.4 !important;
+  margin-bottom: var(--sp-sm) !important;
+  flex: 1 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.level-card-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding-top: var(--sp-sm) !important;
+  font-size: 0.78rem !important;
+}
+
+body.light-theme .level-card-footer {
+  border-top-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.level-card-progress-bar {
+  height: 6px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: var(--radius-full) !important;
+  overflow: hidden !important;
+  margin-top: 4px !important;
+}
+body.light-theme .level-card-progress-bar {
+  background: #e2e8f0 !important;
+}
+
+.level-card-progress-fill {
+  height: 100% !important;
+  border-radius: var(--radius-full) !important;
+  box-shadow: 0 0 8px var(--level-color) !important;
+  transition: width 0.8s ease-in-out !important;
+}
+.level-card.lib-level-1 .level-card-progress-fill { background: #ef4444 !important; }
+.level-card.lib-level-2 .level-card-progress-fill { background: #f97316 !important; }
+.level-card.lib-level-3 .level-card-progress-fill { background: #eab308 !important; }
+.level-card.lib-level-4 .level-card-progress-fill { background: #3b82f6 !important; }
+.level-card.lib-level-5 .level-card-progress-fill { background: #a855f7 !important; }
+.level-card.lib-level-6 .level-card-progress-fill { background: #10b981 !important; }
+
+
 
 
 
