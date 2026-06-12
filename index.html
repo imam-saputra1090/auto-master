@@ -114,7 +114,10 @@
           </form>
           
           <p class="auth-switch-text" id="auth-switch-container">
-            Belum punya akun? <a id="link-to-register">Daftar Sekarang</a><br>
+            <span id="student-reg-info">Belum punya akun? <a id="link-to-register" style="color: var(--clr-primary); font-weight: 600; cursor: pointer; text-decoration: underline;">Daftar Sekarang</a><br></span>
+            <span id="teacher-reg-info" style="display: none; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; text-align: center;">
+              🔑 <strong>Aktivasi Akun Guru?</strong> Guru tidak perlu mendaftar. Gunakan Password Rahasia yang diatur di Apps Script Anda. Hubungi Pengembang <a href="https://wa.me/6285664236522" target="_blank" style="color: var(--clr-primary); text-decoration: underline; font-weight: 500;">Imam Saputra, S.T. (WA: 085664236522)</a> jika Anda memerlukan bantuan setup database.<br>
+            </span>
             <a id="link-forgot-password" style="font-size: 0.82rem; margin-top: 10px; display: inline-block; color: var(--text-muted); cursor: pointer; text-decoration: underline;">Lupa Password? 🔑</a><br>
             <a id="link-to-teacher-login" style="font-size: 0.82rem; margin-top: 10px; display: inline-block; color: var(--clr-secondary); cursor: pointer; text-decoration: underline; font-weight: 500;">Masuk sebagai Guru 🧑‍🏫</a>
           </p>
@@ -1139,6 +1142,39 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+        <!-- Apps Script Guide & Share Card -->
+        <div class="code-guide-card" style="margin-bottom: var(--sp-lg);">
+          <h3 style="font-size: 1.1rem; color: var(--clr-secondary); margin-bottom: var(--sp-sm); display: flex; align-items: center; gap: 8px;">
+            🛠️ Panduan & Salin Apps Script Database (Untuk Rekan Guru)
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+            Ingin menggunakan game ini untuk kelas Anda sendiri di sekolah? Anda bisa menduplikasi database spreadsheet secara mandiri dengan langkah mudah berikut:
+          </p>
+          <div class="code-guide-steps" style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+            <ol style="padding-left: 20px; margin: 8px 0;">
+              <li><strong>Buat Spreadsheet Baru:</strong> Buat sebuah spreadsheet kosong baru di Google Drive Anda.</li>
+              <li><strong>Buka Google Apps Script:</strong> Pada menu atas spreadsheet, klik <strong>Ekstensi</strong> &gt; <strong>Apps Script</strong>.</li>
+              <li><strong>Tempel Kode Backend:</strong> Hapus seluruh kode bawaan di editor Apps Script, salin kode Apps Script di bawah ini secara penuh dan tempelkan.</li>
+              <li><strong>Atur Password Guru Anda:</strong> Sesuaikan konfigurasi password dasbor Anda pada variabel <code>TEACHER_SECRET</code> di baris ke-30 (ganti sesuai keinginan Anda).</li>
+              <li><strong>Jalankan Fungsi Setup:</strong> Pilih fungsi <code>SETUP</code> pada menu dropdown bagian atas editor, kemudian klik tombol <strong>Run / Jalankan</strong>. Fungsi ini akan membuat lembar kerja <code>users</code>, <code>scores</code>, dan <code>sessions</code> secara otomatis di Spreadsheet Anda.</li>
+              <li><strong>Terapkan Aplikasi Web:</strong> Klik tombol <strong>Terapkan (Deploy)</strong> &gt; <strong>Terapkan Baru (New Deployment)</strong>. Pilih tipe **Aplikasi Web (Web App)**. Konfigurasikan:
+                <ul style="padding-left: 20px; margin: 4px 0; list-style-type: circle;">
+                  <li>Jalankan sebagai (Execute as): <strong>Saya / Me (akun Google Anda)</strong></li>
+                  <li>Siapa yang memiliki akses (Who has access): <strong>Siapa saja / Anyone</strong></li>
+                </ul>
+              </li>
+              <li><strong>Hubungkan ke Dasbor:</strong> Salin URL Aplikasi Web yang muncul setelah penerapan, masukkan pada kolom <strong>Konfigurasi Google Apps Script URL API</strong> di atas dasbor ini, lalu klik **Simpan 💾**.</li>
+            </ol>
+          </div>
+          <div class="code-textarea-container">
+            <textarea id="textarea-script-code" class="code-textarea" readonly placeholder="Sedang memuat berkas Apps Script Code.gs..."></textarea>
+          </div>
+          <div class="code-action-row" style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button id="btn-copy-script-code" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 6px;" type="button">
+              📋 Salin Kode Apps Script
+            </button>
           </div>
         </div>
 
