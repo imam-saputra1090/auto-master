@@ -1218,7 +1218,7 @@ const App = {
 
       // Buat kartu level
       const card = document.createElement('div');
-      card.className = `level-card ${finalUnlocked ? '' : 'locked'} ${progress.quizCompleted ? 'completed' : ''}`;
+      card.className = `level-card lib-level-${levelId} ${finalUnlocked ? '' : 'locked'} ${progress.quizCompleted ? 'completed' : ''}`;
       card.dataset.level = levelId;
 
       // Render bintang
@@ -1241,29 +1241,23 @@ const App = {
       }
 
       card.innerHTML = `
-        <div class="level-icon">${this.getLevelIconSVG(levelId)}</div>
-        <div class="level-info">
-          <div class="level-number" style="font-size: 0.72rem; color: var(--level-color); font-weight: 700; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Level ${levelId}</div>
-          <h3 class="level-title" style="margin: 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25;">${level.title || 'Level ' + levelId}</h3>
-          <p class="level-desc" style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 6px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25;">${level.description || ''}</p>
+        <div class="level-card-badge">LEVEL 0${levelId}</div>
+        <div class="level-card-graphic">${this._getLibraryIconSvg(levelId)}</div>
+        <h3 class="level-card-title">${level.title || 'Level ' + levelId}</h3>
+        <p class="level-card-desc">${level.description || ''}</p>
+        <div class="level-card-footer">
           ${finalUnlocked ? `
-            <div class="level-progress-bar" style="margin-bottom: 0;">
-              <div class="level-progress-fill" style="width: ${completionPercent}%"></div>
-            </div>
+            <div class="level-card-stars">${starsHTML}</div>
+            ${statusBadgeHTML}
           ` : `
-            <div style="font-size: 0.72rem; color: var(--text-muted); font-style: italic;">
+            <span class="level-card-progress-text" style="color: var(--text-muted); font-size: 0.75rem; font-style: italic;">
               ${isLevel6Special ? '🔒 Selesaikan Level 1–5' : '🔒 Selesaikan level sebelumnya'}
-            </div>
+            </span>
+            ${statusBadgeHTML}
           `}
         </div>
-        <div class="level-meta">
-          ${statusBadgeHTML}
-          ${finalUnlocked ? `
-            <div class="stars">${starsHTML}</div>
-            <span class="level-progress-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block; font-weight: 500;">${completionPercent}% selesai</span>
-          ` : `
-            <span class="level-lock">🔒</span>
-          `}
+        <div class="level-card-progress-bar">
+          <div class="level-card-progress-fill" style="width: ${finalUnlocked ? completionPercent : 0}%"></div>
         </div>
       `;
 
