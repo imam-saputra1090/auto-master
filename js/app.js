@@ -1237,8 +1237,13 @@ const App = {
 
     if (btnNext) {
       if (this.currentSlide >= totalSlides - 1) {
-        btnNext.textContent = 'Selesai ✅';
-        btnNext.classList.add('btn-finish-learn');
+        if (this.learningSource === 'library') {
+          btnNext.textContent = 'Kembali ke Perpustakaan 📚';
+          btnNext.classList.remove('btn-finish-learn');
+        } else {
+          btnNext.textContent = 'Selesai ✅';
+          btnNext.classList.add('btn-finish-learn');
+        }
       } else {
         btnNext.textContent = 'Selanjutnya →';
         btnNext.classList.remove('btn-finish-learn');
@@ -1269,7 +1274,6 @@ const App = {
       this.renderLearnSlide();
     } else {
       if (this.learningSource === 'library') {
-        this.showToast('📖 Selesai membaca materi referensi.', 'success');
         this.showScreen('library');
         this.renderLibrary();
       } else {
