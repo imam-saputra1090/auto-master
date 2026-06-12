@@ -81,7 +81,32 @@
     <section id="screen-login" class="screen active">
       <div class="auth-container">
         <div class="auth-card">
-          <div class="auth-logo">🔧</div>
+          <div class="auth-logo" style="margin-bottom: var(--sp-md); display: flex; justify-content: center; transform: scale(1.15);">
+            <svg width="80" height="80" viewBox="0 0 100 100" style="filter: drop-shadow(0 6px 12px rgba(13, 148, 136, 0.15));">
+              <!-- Outer Gear (Rotates) -->
+              <g style="animation: spin-clockwise 10s linear infinite; transform-origin: 50px 50px;">
+                <circle cx="50" cy="50" r="32" fill="none" stroke="var(--clr-secondary)" stroke-width="6" />
+                <path d="M 50 12 L 50 4 M 50 88 L 50 96 M 12 50 L 4 50 M 88 50 L 96 50 M 23 23 L 17 17 M 77 77 L 83 83 M 23 77 L 17 83 M 77 23 L 83 17" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+              </g>
+              <!-- Inner circles -->
+              <circle cx="50" cy="50" r="24" fill="#ffffff" stroke="var(--clr-primary)" stroke-width="2" />
+              <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(13, 148, 136, 0.1)" stroke-width="4" />
+              <!-- Crossed Wrench & Screwdriver -->
+              <g transform="translate(50, 50) scale(0.8)">
+                <path d="M -22 -12 L 12 22" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+                <circle cx="-22" cy="-12" r="7" fill="var(--clr-secondary)" />
+                <circle cx="-22" cy="-12" r="3.5" fill="#ffffff" />
+                <path d="M -12 22 L 22 -12" stroke="var(--clr-accent)" stroke-width="5" stroke-linecap="round" />
+                <path d="M -15 25 L -22 32" stroke="#475569" stroke-width="8" stroke-linecap="round" />
+              </g>
+              <!-- Center car silhouette -->
+              <path d="M 36 54 L 41 46 C 43 43 47 42 50 42 L 60 42 C 63 42 66 44 68 47 L 73 54 C 75 56 74 60 70 60 L 39 60 C 35 60 34 56 36 54 Z" fill="var(--clr-primary)" style="animation: car-bounce 3s ease-in-out infinite; transform-origin: 50px 50px;" />
+              <circle cx="44" cy="60" r="4" fill="#1e293b" />
+              <circle cx="44" cy="60" r="1.5" fill="#ffffff" />
+              <circle cx="65" cy="60" r="4" fill="#1e293b" />
+              <circle cx="65" cy="60" r="1.5" fill="#ffffff" />
+            </svg>
+          </div>
           <h2 class="auth-title">AutoMaster</h2>
           <p class="auth-subtitle" id="auth-subtitle">Login Siswa — Bengkel Virtual</p>
           
@@ -133,7 +158,32 @@
     <section id="screen-register" class="screen">
       <div class="auth-container">
         <div class="auth-card">
-          <div class="auth-logo">📝</div>
+          <div class="auth-logo" style="margin-bottom: var(--sp-md); display: flex; justify-content: center; transform: scale(1.15);">
+            <svg width="80" height="80" viewBox="0 0 100 100" style="filter: drop-shadow(0 6px 12px rgba(13, 148, 136, 0.15));">
+              <!-- Outer Gear (Rotates) -->
+              <g style="animation: spin-clockwise 10s linear infinite; transform-origin: 50px 50px;">
+                <circle cx="50" cy="50" r="32" fill="none" stroke="var(--clr-secondary)" stroke-width="6" />
+                <path d="M 50 12 L 50 4 M 50 88 L 50 96 M 12 50 L 4 50 M 88 50 L 96 50 M 23 23 L 17 17 M 77 77 L 83 83 M 23 77 L 17 83 M 77 23 L 83 17" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+              </g>
+              <!-- Inner circles -->
+              <circle cx="50" cy="50" r="24" fill="#ffffff" stroke="var(--clr-primary)" stroke-width="2" />
+              <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(13, 148, 136, 0.1)" stroke-width="4" />
+              <!-- Crossed Wrench & Screwdriver -->
+              <g transform="translate(50, 50) scale(0.8)">
+                <path d="M -22 -12 L 12 22" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+                <circle cx="-22" cy="-12" r="7" fill="var(--clr-secondary)" />
+                <circle cx="-22" cy="-12" r="3.5" fill="#ffffff" />
+                <path d="M -12 22 L 22 -12" stroke="var(--clr-accent)" stroke-width="5" stroke-linecap="round" />
+                <path d="M -15 25 L -22 32" stroke="#475569" stroke-width="8" stroke-linecap="round" />
+              </g>
+              <!-- Center car silhouette -->
+              <path d="M 36 54 L 41 46 C 43 43 47 42 50 42 L 60 42 C 63 42 66 44 68 47 L 73 54 C 75 56 74 60 70 60 L 39 60 C 35 60 34 56 36 54 Z" fill="var(--clr-primary)" style="animation: car-bounce 3s ease-in-out infinite; transform-origin: 50px 50px;" />
+              <circle cx="44" cy="60" r="4" fill="#1e293b" />
+              <circle cx="44" cy="60" r="1.5" fill="#ffffff" />
+              <circle cx="65" cy="60" r="4" fill="#1e293b" />
+              <circle cx="65" cy="60" r="1.5" fill="#ffffff" />
+            </svg>
+          </div>
           <h2 class="auth-title">Daftar Akun</h2>
           <p class="auth-subtitle">Registrasi Mandiri Siswa TKR</p>
           
@@ -200,8 +250,36 @@
             <div class="welcome-badge" style="background: rgba(13, 148, 136, 0.1); color: var(--clr-secondary); padding: 6px 16px; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-bottom: var(--sp-md);">
               TEKNIK KENDARAAN RINGAN (TKR)
             </div>
+            <!-- Logo Emblem -->
+            <div class="welcome-logo-container" style="margin-bottom: var(--sp-md); display: flex; justify-content: center; align-items: center;">
+              <svg width="100" height="100" viewBox="0 0 100 100" style="filter: drop-shadow(0 8px 16px rgba(13, 148, 136, 0.15));">
+                <!-- Outer Gear (Rotates) -->
+                <g style="animation: spin-clockwise 10s linear infinite; transform-origin: 50px 50px;">
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="var(--clr-secondary)" stroke-width="6" />
+                  <path d="M 50 12 L 50 4 M 50 88 L 50 96 M 12 50 L 4 50 M 88 50 L 96 50 M 23 23 L 17 17 M 77 77 L 83 83 M 23 77 L 17 83 M 77 23 L 83 17" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+                </g>
+                <!-- Inner circles -->
+                <circle cx="50" cy="50" r="24" fill="#ffffff" stroke="var(--clr-primary)" stroke-width="2" />
+                <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(13, 148, 136, 0.1)" stroke-width="4" />
+                <!-- Crossed Wrench & Screwdriver -->
+                <g transform="translate(50, 50) scale(0.8)">
+                  <path d="M -22 -12 L 12 22" stroke="var(--clr-secondary)" stroke-width="6" stroke-linecap="round" />
+                  <circle cx="-22" cy="-12" r="7" fill="var(--clr-secondary)" />
+                  <circle cx="-22" cy="-12" r="3.5" fill="#ffffff" />
+                  <path d="M -12 22 L 22 -12" stroke="var(--clr-accent)" stroke-width="5" stroke-linecap="round" />
+                  <path d="M -15 25 L -22 32" stroke="#475569" stroke-width="8" stroke-linecap="round" />
+                </g>
+                <!-- Center car silhouette -->
+                <path d="M 36 54 L 41 46 C 43 43 47 42 50 42 L 60 42 C 63 42 66 44 68 47 L 73 54 C 75 56 74 60 70 60 L 39 60 C 35 60 34 56 36 54 Z" fill="var(--clr-primary)" style="animation: car-bounce 3s ease-in-out infinite; transform-origin: 50px 50px;" />
+                <circle cx="44" cy="60" r="4" fill="#1e293b" />
+                <circle cx="44" cy="60" r="1.5" fill="#ffffff" />
+                <circle cx="65" cy="60" r="4" fill="#1e293b" />
+                <circle cx="65" cy="60" r="1.5" fill="#ffffff" />
+              </svg>
+            </div>
+            
             <h1 class="welcome-hero-title">
-              Selamat Datang di AutoMaster! 🚗💨
+              Selamat Datang di AutoMaster!
             </h1>
             <p style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: 600; color: var(--text-secondary); margin-bottom: var(--sp-md); max-width: 620px; margin-left: auto; margin-right: auto;">
               Gim Edukasi Interaktif Multimedia Teknik Kendaraan Ringan (TKR)
@@ -362,6 +440,72 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- Cakupan Kompetensi Keahlian TKR Section -->
+        <div class="welcome-steps-section" style="background: linear-gradient(135deg, rgba(132, 204, 22, 0.05) 0%, rgba(13, 148, 136, 0.05) 100%); border-color: rgba(132, 204, 22, 0.15);">
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--clr-accent); padding-bottom: 8px; margin-bottom: var(--sp-md); flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-size: 1.25rem; font-weight: 900; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+              <span>🎯</span> Cakupan Kompetensi &amp; Materi Sayembara (Materi II)
+            </h3>
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--clr-accent); background: rgba(132, 204, 22, 0.08); padding: 4px 12px; border-radius: var(--radius-full); text-transform: uppercase; letter-spacing: 0.5px;">KURIKULUM MERDEKA TKR</span>
+          </div>
+
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--sp-lg); line-height: 1.6;">
+            Gim ini telah diselaraskan secara penuh dengan silabus <strong>Materi II: Kecakapan Kerja Dasar, K3, dan Budaya Kerja Otomotif</strong>. Berikut adalah pemetaan materi pembelajaran yang dapat Anda jelajahi:
+          </p>
+
+          <div class="welcome-steps-grid" style="grid-template-columns: 1fr; gap: var(--sp-md); margin-top: var(--sp-md);">
+            <!-- Kartu Materi II: K3 & Budaya Kerja -->
+            <div class="welcome-step-card" style="width: 100%; box-sizing: border-box;">
+              <div class="welcome-step-badge green" style="background: linear-gradient(135deg, var(--clr-accent) 0%, #65a30d 100%);">🔰</div>
+              <div class="welcome-step-info" style="width: 100%;">
+                <h4 style="color: var(--clr-accent);">Kecakapan Kerja Dasar, K3, &amp; Budaya Kerja (Materi II)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 8px; font-size: 0.82rem; color: var(--text-secondary); text-align: left;">
+                  <div>
+                    <strong>🔧 Perawatan &amp; Perbaikan:</strong> Memahami perbedaan pemeliharaan preventif rutin (perawatan) dengan troubleshooting pembongkaran komponen rusak (perbaikan).
+                  </div>
+                  <div>
+                    <strong>⚠️ Potensi Bahaya Kerja:</strong> Identifikasi area bahaya bengkel (terjepit gir transmisi, cairan aki korosif, gas buang beracun, kejutan listrik).
+                  </div>
+                  <div>
+                    <strong>🥽 Alat Pelindung Diri (APD):</strong> Prosedur wajib memakai wearpack, safety shoes, kacamata pelindung, sarung tangan anti-panas, dan masker.
+                  </div>
+                  <div>
+                    <strong>🚨 Keadaan Darurat &amp; APAR:</strong> Teknik penanganan kebakaran dini menggunakan tabung APAR berdasarkan klasifikasi kebakaran, serta jalur evakuasi.
+                  </div>
+                  <div>
+                    <strong>🌱 Budaya Kerja 5S/5R:</strong> Implementasi Ringkas, Rapi, Resik, Rawat, dan Rajin (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) di lingkungan bengkel.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kartu Materi Teknis Otomotif -->
+            <div class="welcome-step-card" style="width: 100%; box-sizing: border-box;">
+              <div class="welcome-step-badge orange">🚗</div>
+              <div class="welcome-step-info" style="width: 100%;">
+                <h4 style="color: var(--clr-primary);">Sistem &amp; Teknologi Mekanik Otomotif</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 8px; font-size: 0.82rem; color: var(--text-secondary); text-align: left;">
+                  <div>
+                    <strong>🔴 Sistem Rem:</strong> Rem hidrolik, pembongkaran kampas cakram (disc brake), rem tromol (drum brake), dan pembuangan udara (bleeding).
+                  </div>
+                  <div>
+                    <strong>⚙️ Mesin Kendaraan:</strong> Analisis siklus kerja motor bensin 4-tak (Hisap, Kompresi, Usaha, Buang) dan motor bensin 2-tak.
+                  </div>
+                  <div>
+                    <strong>⚡ Kelistrikan Bodi:</strong> Pemahaman rangkaian kelistrikan penerangan, lampu kepala, relay pengaman, flasher rating, klakson, dan baterai/aki.
+                  </div>
+                  <div>
+                    <strong>🔄 Pemindah Tenaga:</strong> Prinsip kerja kopling geser plat tunggal, mekanisme sinkromes transmisi manual, gardan, dan diferensial.
+                  </div>
+                  <div>
+                    <strong>⛽ Pendinginan &amp; Radiator:</strong> Sirkulasi coolant oleh water pump, kerja katup termostat bypass, tutup radiator tekanan tinggi, dan filter bahan bakar.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Panduan "Ayo Kita Mulai!" Section -->
