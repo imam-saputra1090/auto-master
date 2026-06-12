@@ -3628,5 +3628,115 @@ body.light-theme .anim-card-icon {
   background: rgba(255, 107, 53, 0.05);
 }
 
+/* --- Settings Page Upgrades --- */
+.settings-section {
+  padding: var(--sp-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--sp-md);
+  animation: slideUp 0.4s ease forwards;
+}
+
+.settings-section h3 {
+  font-family: var(--ff-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: var(--sp-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-field {
+  margin-bottom: var(--sp-md);
+}
+
+.settings-field:last-child {
+  margin-bottom: 0;
+}
+
+.settings-field label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
+  font-weight: 500;
+}
+
+.settings-field input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  font-family: var(--ff-body);
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.settings-field input[type="text"]:focus {
+  border-color: var(--clr-primary);
+  background: rgba(255, 107, 53, 0.04);
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
+}
+
+/* Light Theme overrides for Settings */
+body.light-theme .settings-section {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .settings-field input[type="text"] {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary);
+}
+
+body.light-theme .settings-field input[type="text"]:focus {
+  border-color: var(--clr-primary);
+  background: #ffffff;
+}
+
+body.light-theme .settings-field input[type="text"][readonly] {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.settings-field input[type="text"][readonly] {
+  background: #222 !important;
+  color: #888 !important;
+  border: 1px solid #444 !important;
+}
+
+/* Responsive modal avatar list and layout */
+@media (max-width: 500px) {
+  .avatar-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: var(--sp-xs) !important;
+  }
+  
+  .avatar-option-btn {
+    padding: var(--sp-xs) !important;
+  }
+  
+  .avatar-option-btn .avatar-emoji {
+    font-size: 1.5rem !important;
+  }
+  
+  .avatar-option-btn .avatar-label {
+    white-space: normal !important;
+    text-align: center;
+    font-size: 0.6rem !important;
+  }
+}
+
 
 
