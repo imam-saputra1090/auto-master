@@ -79,6 +79,18 @@ const AuthManager = {
   },
 
   /**
+   * Clean NIS format by stripping decimals and non-digits.
+   */
+  _cleanNis(nis) {
+    if (nis === null || nis === undefined) return '';
+    let str = String(nis).trim();
+    if (str.indexOf('.') !== -1) {
+      str = str.split('.')[0];
+    }
+    return str.replace(/\D/g, "");
+  },
+
+  /**
    * Validate NIS (Nomor Induk Siswa).
    * Must be numeric, 4-10 digits.
    * @param {string} nis
@@ -181,7 +193,7 @@ const AuthManager = {
       const url = this.API_URL + '?action=register';
       const payload = {
         action: 'register',
-        nis: nis.trim(),
+        nis: this._cleanNis(nis),
         nama: nama.trim(),
         kelas: kelas.trim(),
         wa: wa.trim(),
@@ -236,7 +248,7 @@ const AuthManager = {
       const url = this.API_URL + '?action=login';
       const payload = {
         action: 'login',
-        nis: nis.trim(),
+        nis: this._cleanNis(nis),
         password: password,
         device: this._getDeviceType(),
         userAgent: navigator.userAgent
@@ -258,7 +270,7 @@ const AuthManager = {
       if (result.success && result.data) {
         // Build session object
         this._session = {
-          nis: result.data.nis || nis.trim(),
+          nis: this._cleanNis(result.data.nis || nis),
           nama: result.data.nama || '',
           kelas: result.data.kelas || '',
           token: result.data.token || this._generateLocalToken(),
@@ -330,7 +342,7 @@ const AuthManager = {
       const url = this.API_URL + '?action=updateprofile';
       const payload = {
         action: 'updateprofile',
-        nis: nis.trim(),
+        nis: this._cleanNis(nis),
         nama: nama.trim()
       };
 
