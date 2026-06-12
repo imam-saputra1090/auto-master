@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="AutoMaster — Bengkel Virtual SMK: Game edukasi interaktif untuk mempelajari sistem otomotif kendaraan ringan. Belajar, simulasi, dan kuis dalam satu platform digital.">
+  <meta name="keywords" content="AutoMaster, bengkel virtual, SMK, otomotif, kendaraan ringan, game edukasi, bahan ajar digital, sistem rem, mesin kendaraan, kelistrikan">
+  <meta name="author" content="Imam Saputra, S.T. — SMK Amal Bakti Jatimulyo">
+  <meta name="theme-color" content="#0a0e17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>AutoMaster — Bengkel Virtual SMK</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Favicon (inline SVG as data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23ff6b35'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white'%3E🔧%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+  <!-- TEMPORARY DEBUG ERROR CONSOLE -->
+  <div id="debug-error-console" style="position: fixed; top: 0; left: 0; right: 0; background: #dc3545; color: white; padding: 15px; z-index: 1000000; font-family: monospace; display: none; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow-y: auto; max-height: 200px;">
+    <strong>[JavaScript Error Alert]</strong><br>
+    <div id="debug-error-list"></div>
+    <button onclick="this.parentNode.style.display='none'" style="margin-top: 10px; background: white; color: black; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Tutup</button>
+  </div>
+  <script>
+    window.addEventListener('error', function(e) {
+      var consoleEl = document.getElementById('debug-error-console');
+      var listEl = document.getElementById('debug-error-list');
+      if (consoleEl && listEl) {
+        consoleEl.style.display = 'block';
+        var errDiv = document.createElement('div');
+        errDiv.style.borderBottom = '1px solid rgba(255,255,255,0.3)';
+        errDiv.style.padding = '5px 0';
+        errDiv.textContent = e.message + ' at ' + e.filename + ':' + e.lineno + ':' + e.colno;
+        listEl.appendChild(errDiv);
+      }
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      var consoleEl = document.getElementById('debug-error-console');
+      var listEl = document.getElementById('debug-error-list');
+      if (consoleEl && listEl) {
+        consoleEl.style.display = 'block';
+        var errDiv = document.createElement('div');
+        errDiv.style.borderBottom = '1px solid rgba(255,255,255,0.3)';
+        errDiv.style.padding = '5px 0';
+        errDiv.textContent = 'Unhandled Rejection: ' + (e.reason ? (e.reason.message || e.reason) : e);
+        listEl.appendChild(errDiv);
+      }
+    });
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LOADING OVERLAY
+       ═══════════════════════════════════════════════════════ -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Memuat AutoMaster…</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       APP CONTAINER
+       ═══════════════════════════════════════════════════════ -->
+  <div id="app">
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 0 — LOGIN
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-login" class="screen active">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-logo">🔧</div>
+          <h2 class="auth-title">AutoMaster</h2>
+          <p class="auth-subtitle">Login Siswa — Bengkel Virtual</p>
+          
+          <form id="form-login" onsubmit="event.preventDefault();">
+            <div class="auth-form-group">
+              <label for="login-nis">NIS (Nomor Induk Siswa)</label>
+              <input type="text" id="login-nis" placeholder="Masukkan NIS Anda" required autocomplete="username">
+            </div>
+            
+            <div class="auth-form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="Masukkan Password" required autocomplete="current-password">
+            </div>
+            
+            <div class="auth-btn-container">
+              <button type="submit" id="btn-login-submit" class="btn btn-primary btn-lg">Masuk 🚀</button>
+            </div>
+          </form>
+          
+          <p class="auth-switch-text">
+            Belum punya akun? <a id="link-to-register">Daftar Sekarang</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 0.1 — REGISTER
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-register" class="screen">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-logo">📝</div>
+          <h2 class="auth-title">Daftar Akun</h2>
+          <p class="auth-subtitle">Registrasi Mandiri Siswa TKR</p>
+          
+          <form id="form-register" onsubmit="event.preventDefault();">
+            <div class="auth-form-group">
+              <label for="register-nis">NIS (Nomor Induk Siswa)</label>
+              <input type="text" id="register-nis" placeholder="Contoh: 12345 (4-10 digit)" required>
+            </div>
+            
+            <div class="auth-form-group">
+              <label for="register-nama">Nama Lengkap</label>
+              <input type="text" id="register-nama" placeholder="Nama Lengkap Anda" required>
+            </div>
+            
+            <div class="auth-form-group">
+              <label for="register-kelas">Kelas</label>
+              <select id="register-kelas" required>
+                <option value="" disabled selected>Pilih Kelas Anda</option>
+                <option value="X TKR 1">Kelas X TKR 1</option>
+                <option value="X TKR 2">Kelas X TKR 2</option>
+                <option value="X TKR 3">Kelas X TKR 3</option>
+                <option value="XI TKR 1">Kelas XI TKR 1</option>
+                <option value="XI TKR 2">Kelas XI TKR 2</option>
+                <option value="XII TKR 1">Kelas XII TKR 1</option>
+              </select>
+            </div>
+            
+            <div class="auth-form-group">
+              <label for="register-wa">Nomor WhatsApp</label>
+              <input type="text" id="register-wa" placeholder="Contoh: 081234567890" required>
+            </div>
+            
+            <div class="auth-form-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" placeholder="Minimal 6 karakter" required autocomplete="new-password">
+            </div>
+            
+            <div class="auth-btn-container">
+              <button type="submit" id="btn-register-submit" class="btn btn-primary btn-lg">Daftar 🚀</button>
+            </div>
+          </form>
+          
+          <p class="auth-switch-text">
+            Sudah punya akun? <a id="link-to-login">Kembali Login</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 1 — LANDING / SPLASH
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-landing" class="screen">
+
+      <!-- Background decorative gears -->
+      <div class="landing-bg-decor">
+        <svg class="gear" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="top:-60px;left:-60px;width:200px;height:200px;">
+          <path fill="currentColor" d="M50 10 L55 0 L60 10 L70 5 L68 16 L78 14 L73 24 L82 26 L75 34 L84 40 L75 45 L82 53 L73 55 L78 64 L68 62 L70 72 L60 68 L55 78 L50 68 L45 78 L40 68 L30 72 L32 62 L22 64 L27 55 L18 53 L25 45 L16 40 L25 34 L18 26 L27 24 L22 14 L32 16 L30 5 L40 10 L45 0 L50 10 Z M50 30 a20 20 0 1 0 0 40 a20 20 0 1 0 0-40Z" fill-rule="evenodd"/>
+        </svg>
+        <svg class="gear" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="bottom:-40px;right:-40px;width:260px;height:260px;">
+          <path fill="currentColor" d="M50 10 L55 0 L60 10 L70 5 L68 16 L78 14 L73 24 L82 26 L75 34 L84 40 L75 45 L82 53 L73 55 L78 64 L68 62 L70 72 L60 68 L55 78 L50 68 L45 78 L40 68 L30 72 L32 62 L22 64 L27 55 L18 53 L25 45 L16 40 L25 34 L18 26 L27 24 L22 14 L32 16 L30 5 L40 10 L45 0 L50 10 Z M50 30 a20 20 0 1 0 0 40 a20 20 0 1 0 0-40Z" fill-rule="evenodd"/>
+        </svg>
+        <svg class="gear" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="top:20%;right:10%;width:120px;height:120px;">
+          <path fill="currentColor" d="M50 10 L55 0 L60 10 L70 5 L68 16 L78 14 L73 24 L82 26 L75 34 L84 40 L75 45 L82 53 L73 55 L78 64 L68 62 L70 72 L60 68 L55 78 L50 68 L45 78 L40 68 L30 72 L32 62 L22 64 L27 55 L18 53 L25 45 L16 40 L25 34 L18 26 L27 24 L22 14 L32 16 L30 5 L40 10 L45 0 L50 10 Z M50 30 a20 20 0 1 0 0 40 a20 20 0 1 0 0-40Z" fill-rule="evenodd"/>
+        </svg>
+      </div>
+
+      <!-- Floating decorations -->
+      <div class="landing-decor-wrench" aria-hidden="true">🔧</div>
+      <div class="landing-decor-car" aria-hidden="true">🚗</div>
+
+      <!-- Main landing content -->
+      <div class="landing-content">
+        <div class="landing-logo">
+          <div class="logo-icon" aria-hidden="true">🔧</div>
+        </div>
+        <h1 class="landing-title">AutoMaster</h1>
+        <p class="landing-subtitle">Bengkel Virtual SMK</p>
+        <p class="landing-tagline">
+          Kuasai dunia otomotif melalui simulasi interaktif, materi visual, dan tantangan kuis yang seru. Siap menjadi teknisi handal?
+        </p>
+        <button id="btn-start" class="btn btn-primary btn-lg" type="button">
+          🚀 Mulai Belajar
+        </button>
+      </div>
+
+      <!-- Footer credit -->
+      <footer class="landing-footer">
+        Dikembangkan oleh <span>Imam Saputra, S.T.</span> | SMK Amal Bakti Jatimulyo
+      </footer>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 2 — MAIN MENU
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-menu" class="screen">
+
+      <!-- Player info bar -->
+      <div id="player-info">
+        <div class="player-avatar" aria-hidden="true">🧑‍🔧</div>
+        <div class="player-details">
+          <div class="player-name" id="display-player-name">Mekanik</div>
+          <div class="player-level-title" id="display-level-title">Pemula — Level 1</div>
+        </div>
+        <div class="xp-bar-container">
+          <div class="xp-bar-label">
+            <span>XP</span>
+            <span id="display-xp">0 / 500</span>
+          </div>
+          <div class="xp-bar">
+            <div class="xp-bar-fill" id="xp-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Grid -->
+      <div class="menu-grid">
+        <!-- Card 1: Peta Bengkel -->
+        <div class="menu-card" id="btn-goto-map" role="button" tabindex="0" aria-label="Peta Bengkel — Mulai permainan utama">
+          <div class="menu-card-icon">🗺️</div>
+          <h3 class="menu-card-title">Peta Bengkel</h3>
+          <p class="menu-card-desc">Jelajahi level dan kuasai setiap sistem kendaraan</p>
+        </div>
+
+        <!-- Card 2: Perpustakaan -->
+        <div class="menu-card" id="btn-goto-library" role="button" tabindex="0" aria-label="Perpustakaan — Buka materi referensi">
+          <div class="menu-card-icon">📚</div>
+          <h3 class="menu-card-title">Perpustakaan</h3>
+          <p class="menu-card-desc">Materi referensi dan panduan belajar lengkap</p>
+        </div>
+
+        <!-- Card 3: Papan Skor -->
+        <div class="menu-card" id="btn-goto-scores" role="button" tabindex="0" aria-label="Papan Skor — Lihat pencapaian dan skor">
+          <div class="menu-card-icon">🏅</div>
+          <h3 class="menu-card-title">Papan Skor</h3>
+          <p class="menu-card-desc">Pencapaian, badge, dan statistik belajarmu</p>
+        </div>
+
+        <!-- Card 4: Pengaturan -->
+        <div class="menu-card" id="btn-goto-settings" role="button" tabindex="0" aria-label="Pengaturan — Ubah pengaturan aplikasi">
+          <div class="menu-card-icon">⚙️</div>
+          <h3 class="menu-card-title">Pengaturan</h3>
+          <p class="menu-card-desc">Atur profil, suara, dan lainnya</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 3 — WORKSHOP MAP / LEVEL SELECT
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-map" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-map" type="button" aria-label="Kembali ke menu">←</button>
+        <h2>🗺️ Peta Bengkel</h2>
+      </div>
+
+      <!-- Level Map Grid -->
+      <div class="level-map level-grid">
+
+        <!-- Level 1: Sistem Rem -->
+        <div class="level-card available" data-level="1" role="button" tabindex="0">
+          <div class="level-icon">🔴</div>
+          <div class="level-info">
+            <div class="level-title">Sistem Rem</div>
+            <div class="level-progress-text">0% selesai</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <!-- Level 2: Mesin Kendaraan -->
+        <div class="level-card locked" data-level="2" role="button" tabindex="0">
+          <div class="level-icon">⚙️</div>
+          <div class="level-info">
+            <div class="level-title">Mesin Kendaraan</div>
+            <div class="level-progress-text">Terkunci</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true">🔒</span>
+          </div>
+        </div>
+
+        <!-- Level 3: Sistem Kelistrikan -->
+        <div class="level-card locked" data-level="3" role="button" tabindex="0">
+          <div class="level-icon">⚡</div>
+          <div class="level-info">
+            <div class="level-title">Sistem Kelistrikan</div>
+            <div class="level-progress-text">Terkunci</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true">🔒</span>
+          </div>
+        </div>
+
+        <!-- Level 4: Pemindah Tenaga -->
+        <div class="level-card locked" data-level="4" role="button" tabindex="0">
+          <div class="level-icon">🔄</div>
+          <div class="level-info">
+            <div class="level-title">Pemindah Tenaga</div>
+            <div class="level-progress-text">Terkunci</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true">🔒</span>
+          </div>
+        </div>
+
+        <!-- Level 5: Bahan Bakar & Pendingin -->
+        <div class="level-card locked" data-level="5" role="button" tabindex="0">
+          <div class="level-icon">⛽</div>
+          <div class="level-info">
+            <div class="level-title">Bahan Bakar &amp; Pendingin</div>
+            <div class="level-progress-text">Terkunci</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true">🔒</span>
+          </div>
+        </div>
+
+        <!-- Level 6: Ujian Akhir -->
+        <div class="level-card locked" data-level="6" role="button" tabindex="0">
+          <div class="level-icon">🏆</div>
+          <div class="level-info">
+            <div class="level-title">Ujian Akhir</div>
+            <div class="level-progress-text">Selesaikan semua level</div>
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="stars">
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+              <span class="star">⭐</span>
+            </div>
+          </div>
+          <div class="level-meta">
+            <span class="level-lock" aria-hidden="true">🔒</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 4 — LEVEL HUB
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-level" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-level" type="button" aria-label="Kembali ke peta">←</button>
+        <h2 id="level-hub-title">Sistem Rem</h2>
+      </div>
+
+      <div class="level-hub-content">
+        <!-- Level Info -->
+        <div class="level-hub-info">
+          <h3 class="level-detail-title" id="level-hub-heading">Modul 1: Sistem Rem</h3>
+          <p class="level-detail-desc level-description" id="level-hub-desc">Pelajari komponen, prinsip kerja, dan cara perawatan sistem rem kendaraan ringan secara mendalam.</p>
+          <div class="level-detail-stars"></div>
+          <div class="level-best-score"></div>
+        </div>
+
+        <!-- Objectives -->
+        <div class="level-hub-objectives level-objectives">
+          <h4>🎯 Tujuan Pembelajaran</h4>
+          <ul id="level-hub-objectives-list">
+            <li>Mengidentifikasi komponen sistem rem</li>
+            <li>Memahami prinsip kerja rem hidrolik</li>
+            <li>Melakukan perawatan dasar sistem rem</li>
+          </ul>
+        </div>
+
+        <!-- Phase Buttons -->
+        <div class="phase-buttons">
+          <!-- Phase 1: Belajar -->
+          <button id="btn-phase-learn" class="phase-btn" type="button">
+            <div class="phase-icon">📖</div>
+            <div class="phase-details">
+              <div class="phase-title">Belajar</div>
+              <div class="phase-desc">Materi teori dengan gambar &amp; penjelasan</div>
+            </div>
+            <span class="phase-status available">Tersedia</span>
+          </button>
+
+          <!-- Phase 2: Animasi Flash -->
+          <button id="btn-phase-animation" class="phase-btn" type="button">
+            <div class="phase-icon">🎬</div>
+            <div class="phase-details">
+              <div class="phase-title">Animasi Flash</div>
+              <div class="phase-desc">Eksplorasi animasi pembelajaran interaktif</div>
+            </div>
+            <span class="phase-status available">Tersedia</span>
+          </button>
+
+          <!-- Phase 3: Simulasi -->
+          <button id="btn-phase-simulate" class="phase-btn locked" type="button" disabled>
+            <div class="phase-icon">🔧</div>
+            <div class="phase-details">
+              <div class="phase-title">Simulasi</div>
+              <div class="phase-desc">Pasang komponen dengan drag &amp; drop</div>
+            </div>
+            <span class="phase-status locked">Terkunci</span>
+          </button>
+
+          <!-- Phase 4: Kuis -->
+          <button id="btn-phase-quiz" class="phase-btn locked" type="button" disabled>
+            <div class="phase-icon">❓</div>
+            <div class="phase-details">
+              <div class="phase-title">Kuis</div>
+              <div class="phase-desc">Uji pemahamanmu dengan pertanyaan</div>
+            </div>
+            <span class="phase-status locked">Terkunci</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 5 — LEARNING PHASE
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-learn" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-learn" type="button" aria-label="Kembali ke level hub">←</button>
+        <h2>📖 Materi Pembelajaran</h2>
+      </div>
+
+      <!-- Content Area -->
+      <div id="learn-content">
+        <!-- This section is populated by JavaScript -->
+        <div class="learn-section">
+          <h3>Memuat materi…</h3>
+          <p>Konten materi pembelajaran akan ditampilkan di sini.</p>
+        </div>
+
+        <!-- Animation / Interactive Visual -->
+        <div id="learn-animation">
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Area animasi interaktif</p>
+        </div>
+      </div>
+
+      <!-- Navigation Footer -->
+      <nav class="learn-nav" aria-label="Navigasi materi">
+        <button id="btn-learn-prev" class="btn btn-secondary btn-sm" type="button" disabled>
+          ← Sebelumnya
+        </button>
+        <span class="learn-progress-indicator" id="learn-progress">Langkah 1 dari 5</span>
+        <button id="btn-learn-next" class="btn btn-primary btn-sm" type="button">
+          Lanjut →
+        </button>
+      </nav>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 5B — ANIMATION GALLERY PHASE
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-animations" class="screen">
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-animations" type="button" aria-label="Kembali ke level hub">←</button>
+        <h2>🎬 Galeri Animasi Flash</h2>
+      </div>
+
+      <!-- Content Area -->
+      <div class="animations-layout">
+        <p class="animations-intro-text">Pilih dan putar animasi Flash interaktif Ruffle untuk memperdalam pemahaman materi pada level ini:</p>
+        <div id="animations-grid" class="animations-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 6 — SIMULATION PHASE
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-simulate" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-simulate" type="button" aria-label="Kembali ke level hub">←</button>
+        <h2>🔧 Simulasi Bengkel</h2>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Instruction -->
+        <div id="sim-instruction">
+          Seret komponen dari kotak alat ke posisi yang benar pada area kerja.
+        </div>
+
+        <!-- Toolbox -->
+        <div id="sim-toolbox">
+          <div class="toolbox-title">🧰 Kotak Alat</div>
+          <div class="toolbox-items">
+            <!-- Populated by JavaScript -->
+            <div class="draggable" draggable="true" data-component="brake-pad">
+              <span class="drag-icon">🔴</span>
+              <span>Kampas Rem</span>
+            </div>
+            <div class="draggable" draggable="true" data-component="brake-disc">
+              <span class="drag-icon">💿</span>
+              <span>Cakram Rem</span>
+            </div>
+            <div class="draggable" draggable="true" data-component="caliper">
+              <span class="drag-icon">🔩</span>
+              <span>Kaliper</span>
+            </div>
+            <div class="draggable" draggable="true" data-component="master-cylinder">
+              <span class="drag-icon">⚙️</span>
+              <span>Master Silinder</span>
+            </div>
+            <div class="draggable" draggable="true" data-component="brake-fluid">
+              <span class="drag-icon">💧</span>
+              <span>Minyak Rem</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workspace -->
+        <div id="sim-workspace">
+          <!-- Drop zones populated by JavaScript -->
+          <div class="drop-zone" data-target="brake-pad">
+            <span>🔴</span>
+            <span class="drop-label">Kampas Rem</span>
+          </div>
+          <div class="drop-zone" data-target="brake-disc">
+            <span>💿</span>
+            <span class="drop-label">Cakram Rem</span>
+          </div>
+          <div class="drop-zone" data-target="caliper">
+            <span>🔩</span>
+            <span class="drop-label">Kaliper</span>
+          </div>
+          <div class="drop-zone" data-target="master-cylinder">
+            <span>⚙️</span>
+            <span class="drop-label">Master Silinder</span>
+          </div>
+          <div class="drop-zone" data-target="brake-fluid">
+            <span>💧</span>
+            <span class="drop-label">Minyak Rem</span>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div id="sim-feedback"></div>
+
+        <!-- Footer -->
+        <div class="sim-footer">
+          <div id="sim-score">Skor: 0 / 5</div>
+          <button id="btn-sim-finish" class="btn btn-primary btn-sm" type="button">
+            ✅ Selesai
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 7 — QUIZ PHASE
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-quiz" class="screen">
+
+      <!-- Quiz Header -->
+      <div class="quiz-header">
+        <button class="btn-back" id="btn-back-from-quiz" type="button" aria-label="Kembali ke level hub">←</button>
+        <div id="quiz-timer">⏱️ <span>02:00</span></div>
+        <div id="quiz-counter">Soal 1 / 10</div>
+      </div>
+
+      <!-- Quiz Body -->
+      <div class="quiz-body">
+        <!-- Question Image (optional) -->
+        <div id="quiz-image">
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Gambar soal</p>
+        </div>
+
+        <!-- Question Text -->
+        <h3 id="quiz-question">
+          Apa fungsi utama master silinder pada sistem rem hidrolik?
+        </h3>
+
+        <!-- Answer Options -->
+        <div id="quiz-options">
+          <button class="quiz-option" type="button" data-option="A">
+            <span class="option-letter">A</span>
+            <span class="option-text">Mengubah tekanan kaki menjadi tekanan hidrolik</span>
+          </button>
+          <button class="quiz-option" type="button" data-option="B">
+            <span class="option-letter">B</span>
+            <span class="option-text">Menahan roda agar tidak berputar</span>
+          </button>
+          <button class="quiz-option" type="button" data-option="C">
+            <span class="option-letter">C</span>
+            <span class="option-text">Menyimpan minyak rem cadangan</span>
+          </button>
+          <button class="quiz-option" type="button" data-option="D">
+            <span class="option-letter">D</span>
+            <span class="option-text">Mendinginkan komponen rem</span>
+          </button>
+        </div>
+
+        <!-- Feedback -->
+        <div id="quiz-feedback">
+          <strong>Benar! ✅</strong> Master silinder berfungsi mengubah tekanan mekanis dari pedal rem menjadi tekanan hidrolik yang disalurkan ke kaliper rem.
+        </div>
+      </div>
+
+      <!-- Quiz Footer -->
+      <div class="quiz-footer">
+        <button id="btn-quiz-next" class="btn btn-primary" type="button">
+          Lanjut →
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 8 — RESULTS
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-results" class="screen">
+      <div class="results-content">
+        <!-- Stars Animation -->
+        <div class="result-stars-display">
+          <span class="result-star earned">⭐</span>
+          <span class="result-star earned">⭐</span>
+          <span class="result-star">⭐</span>
+        </div>
+
+        <h2 class="results-title">Bagus Sekali! 🎉</h2>
+        <p>Kamu sudah menyelesaikan modul ini dengan baik.</p>
+
+        <!-- Stats -->
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="result-stat-value" id="result-score">85</div>
+            <div class="result-stat-label">Skor</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-value" id="result-xp">+120</div>
+            <div class="result-stat-label">XP</div>
+          </div>
+          <div class="result-stat">
+            <div class="result-stat-value" id="result-stars">2/3</div>
+            <div class="result-stat-label">Bintang</div>
+          </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="result-breakdown">
+          <div class="result-breakdown-row">
+            <span class="label">Jawaban Benar</span>
+            <span class="value" id="result-correct">8 / 10</span>
+          </div>
+          <div class="result-breakdown-row">
+            <span class="label">Waktu</span>
+            <span class="value" id="result-time">01:45</span>
+          </div>
+          <div class="result-breakdown-row">
+            <span class="label">Simulasi</span>
+            <span class="value" id="result-sim">5 / 5</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="result-actions">
+          <button id="btn-retry" class="btn btn-secondary" type="button">
+            🔁 Ulangi
+          </button>
+          <button id="btn-next-level" class="btn btn-primary" type="button">
+            ➡️ Lanjut
+          </button>
+          <button id="btn-back-to-map" class="btn btn-ghost" type="button">
+            🗺️ Kembali ke Peta
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 9 — LIBRARY
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-library" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-library" type="button" aria-label="Kembali ke menu">←</button>
+        <h2>📚 Perpustakaan</h2>
+      </div>
+
+      <!-- Search / Filter -->
+      <div class="library-search">
+        <input type="text" id="library-search-input" placeholder="🔍 Cari materi…" aria-label="Cari materi perpustakaan">
+        <button class="btn btn-secondary btn-sm" id="btn-library-search" type="button">Cari</button>
+      </div>
+
+      <!-- Library Grid -->
+      <div class="library-grid">
+        <div class="library-card" data-topic="brakes">
+          <div class="library-card-icon">🔴</div>
+          <h4 class="library-card-title">Sistem Rem</h4>
+          <p class="library-card-desc">Rem cakram, rem tromol, komponen hidrolik, dan perawatan sistem rem.</p>
+        </div>
+        <div class="library-card" data-topic="engine">
+          <div class="library-card-icon">⚙️</div>
+          <h4 class="library-card-title">Mesin Kendaraan</h4>
+          <p class="library-card-desc">Siklus kerja mesin 4-tak, komponen utama, dan sistem pelumasan.</p>
+        </div>
+        <div class="library-card" data-topic="electrical">
+          <div class="library-card-icon">⚡</div>
+          <h4 class="library-card-title">Sistem Kelistrikan</h4>
+          <p class="library-card-desc">Rangkaian kelistrikan, komponen starter, pengisian, dan penerangan.</p>
+        </div>
+        <div class="library-card" data-topic="transmission">
+          <div class="library-card-icon">🔄</div>
+          <h4 class="library-card-title">Pemindah Tenaga</h4>
+          <p class="library-card-desc">Kopling, transmisi manual & otomatis, propeller shaft, dan diferensial.</p>
+        </div>
+        <div class="library-card" data-topic="fuel-cooling">
+          <div class="library-card-icon">⛽</div>
+          <h4 class="library-card-title">Bahan Bakar &amp; Pendingin</h4>
+          <p class="library-card-desc">Sistem injeksi bahan bakar, sistem pendingin, thermostat, dan radiator.</p>
+        </div>
+        <div class="library-card" data-topic="safety">
+          <div class="library-card-icon">🛡️</div>
+          <h4 class="library-card-title">K3 Bengkel</h4>
+          <p class="library-card-desc">Keselamatan dan kesehatan kerja di lingkungan bengkel otomotif.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 10 — SCOREBOARD
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-scores" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-scores" type="button" aria-label="Kembali ke menu">←</button>
+        <h2>🏅 Papan Skor</h2>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="scores-summary">
+        <div class="score-stat-card" style="animation-delay: 0.1s;">
+          <div class="score-stat-value" id="total-xp">0</div>
+          <div class="score-stat-label">Total XP</div>
+        </div>
+        <div class="score-stat-card" style="animation-delay: 0.2s;">
+          <div class="score-stat-value" id="total-levels">0/6</div>
+          <div class="score-stat-label">Level Selesai</div>
+        </div>
+        <div class="score-stat-card" style="animation-delay: 0.3s;">
+          <div class="score-stat-value" id="total-stars">0/18</div>
+          <div class="score-stat-label">Bintang</div>
+        </div>
+        <div class="score-stat-card" style="animation-delay: 0.4s;">
+          <div class="score-stat-value" id="total-badges">0</div>
+          <div class="score-stat-label">Badge</div>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="achievements-section">
+        <h3>🏆 Pencapaian</h3>
+        <div class="achievements-grid">
+          <div class="badge-card" data-badge="first-step" style="animation-delay: 0.1s;">
+            <div class="badge-icon">🎯</div>
+            <div class="badge-name">Langkah Pertama</div>
+            <div class="badge-desc">Selesaikan level pertama</div>
+          </div>
+          <div class="badge-card locked" data-badge="speed-demon" style="animation-delay: 0.15s;">
+            <div class="badge-icon">⚡</div>
+            <div class="badge-name">Kilat</div>
+            <div class="badge-desc">Selesaikan kuis &lt; 1 menit</div>
+          </div>
+          <div class="badge-card locked" data-badge="perfect-score" style="animation-delay: 0.2s;">
+            <div class="badge-icon">💯</div>
+            <div class="badge-name">Skor Sempurna</div>
+            <div class="badge-desc">Raih skor 100 di kuis</div>
+          </div>
+          <div class="badge-card locked" data-badge="mechanic-pro" style="animation-delay: 0.25s;">
+            <div class="badge-icon">🔧</div>
+            <div class="badge-name">Mekanik Pro</div>
+            <div class="badge-desc">Selesaikan semua simulasi</div>
+          </div>
+          <div class="badge-card locked" data-badge="bookworm" style="animation-delay: 0.3s;">
+            <div class="badge-icon">📖</div>
+            <div class="badge-name">Kutu Buku</div>
+            <div class="badge-desc">Baca semua materi</div>
+          </div>
+          <div class="badge-card locked" data-badge="star-collector" style="animation-delay: 0.35s;">
+            <div class="badge-icon">⭐</div>
+            <div class="badge-name">Kolektor Bintang</div>
+            <div class="badge-desc">Kumpulkan 15 bintang</div>
+          </div>
+          <div class="badge-card locked" data-badge="all-star" style="animation-delay: 0.4s;">
+            <div class="badge-icon">🌟</div>
+            <div class="badge-name">Bintang Penuh</div>
+            <div class="badge-desc">Raih 3 bintang di semua level</div>
+          </div>
+          <div class="badge-card locked" data-badge="graduate" style="animation-delay: 0.45s;">
+            <div class="badge-icon">🎓</div>
+            <div class="badge-name">Lulus Ujian</div>
+            <div class="badge-desc">Selesaikan ujian akhir</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard-panel" style="animation-delay: 0.5s;">
+        <div class="leaderboard-title-row">
+          <h3>📊 Papan Peringkat Kelas</h3>
+          <button id="btn-refresh-leaderboard" class="btn btn-sm" type="button">🔄 Refresh</button>
+        </div>
+        <div class="leaderboard-table-container">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th class="leaderboard-rank">Pos</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>Skor</th>
+                <th>XP</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                  Hubungkan database di pengaturan untuk melihat peringkat.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 11 — SETTINGS
+         ───────────────────────────────────────────────────── -->
+    <section id="screen-settings" class="screen">
+
+      <!-- Header -->
+      <div class="screen-header">
+        <button class="btn-back" id="btn-back-from-settings" type="button" aria-label="Kembali ke menu">←</button>
+        <h2>⚙️ Pengaturan</h2>
+      </div>
+
+      <div class="settings-content">
+        <!-- Profile -->
+        <div class="setting-group" style="animation-delay: 0.1s;">
+          <div class="setting-group-title">Profil</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Nama Pemain</div>
+              <div class="setting-desc">Nama yang ditampilkan di permainan</div>
+            </div>
+            <input type="text" id="input-player-name" class="input-text" placeholder="Nama kamu" value="" aria-label="Nama pemain">
+          </div>
+        </div>
+
+        <!-- Audio -->
+        <div class="setting-group" style="animation-delay: 0.2s;">
+          <div class="setting-group-title">Audio</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Efek Suara</div>
+              <div class="setting-desc">Aktifkan suara klik dan notifikasi</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-sound" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Musik Latar</div>
+              <div class="setting-desc">Putar musik selama bermain</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-music">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Data -->
+        <div class="setting-group" style="animation-delay: 0.3s;">
+          <div class="setting-group-title">Data</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Reset Progress</div>
+              <div class="setting-desc">Hapus semua data dan mulai dari awal</div>
+            </div>
+            <button id="btn-reset-progress" class="btn btn-sm" style="background: rgba(239,68,68,0.15); color: var(--clr-error-light); border: 1px solid rgba(239,68,68,0.3);" type="button">
+              🗑️ Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Server & Database -->
+        <div class="setting-group" style="animation-delay: 0.35s;">
+          <div class="setting-group-title">Koneksi Database</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">API URL Google Sheets</div>
+              <div class="setting-desc">Tanyakan URL Web App ini kepada Guru Anda</div>
+            </div>
+            <input type="text" id="input-api-url" class="input-text" placeholder="https://script.google.com/macros/s/.../exec" value="" style="width: 100%; max-width: 300px;" aria-label="API URL Google Sheets">
+          </div>
+        </div>
+
+        <!-- Akun Siswa -->
+        <div class="setting-group" style="animation-delay: 0.38s;">
+          <div class="setting-group-title">Akun Siswa</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" id="setting-student-info">Belum Login</div>
+              <div class="setting-desc" id="setting-student-nis">Silakan login di halaman depan</div>
+            </div>
+            <button id="btn-logout" class="btn btn-sm" style="background: rgba(239,68,68,0.15); color: var(--clr-error-light); border: 1px solid rgba(239,68,68,0.3);" type="button">
+              🚪 Keluar / Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="setting-group about-section" style="animation-delay: 0.4s;">
+          <div class="about-logo">🔧</div>
+          <h3>AutoMaster</h3>
+          <p>
+            Bengkel Virtual — Game edukasi interaktif untuk siswa SMK bidang Teknik Kendaraan Ringan.
+          </p>
+          <p>
+            Dikembangkan oleh <strong style="color: var(--clr-primary);">Imam Saputra, S.T.</strong><br>
+            SMK Amal Bakti Jatimulyo
+          </p>
+          <p class="version">Versi 1.0.0 — Sayembara Bahan Ajar Digital SMK 2026</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 12 — NAME INPUT MODAL
+         ───────────────────────────────────────────────────── -->
+    <div id="modal-name" role="dialog" aria-modal="true" aria-labelledby="modal-name-title">
+      <div class="modal-overlay"></div>
+      <div class="modal-card">
+        <div class="modal-icon" aria-hidden="true">🧑‍🔧</div>
+        <h2 id="modal-name-title">Selamat Datang, Mekanik!</h2>
+        <p>Masukkan namamu untuk memulai perjalanan di bengkel virtual.</p>
+        <input type="text" id="input-name" placeholder="Ketik nama kamu…" maxlength="30" autocomplete="off" aria-label="Masukkan nama pemain">
+        <button id="btn-save-name" class="btn btn-primary btn-lg" type="button">
+          🚀 Mulai!
+        </button>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────
+         SCREEN 13 — EDIT PROFILE MODAL
+         ───────────────────────────────────────────────────── -->
+    <div id="modal-profile" role="dialog" aria-modal="true" aria-labelledby="modal-profile-title">
+      <div class="modal-overlay"></div>
+      <div class="modal-card" style="max-width: 480px; text-align: left;">
+        <h2 id="modal-profile-title" style="text-align: center; margin-bottom: var(--sp-sm);">👤 Edit Profil</h2>
+        <p style="text-align: center; margin-bottom: var(--sp-md); font-size: 0.9rem; color: var(--text-secondary);">Perbarui detail profil dan pilih avatar unik Anda.</p>
+        
+        <div class="profile-avatar-section">
+          <label class="form-label" style="text-align: center; display: block; margin-bottom: var(--sp-sm);">Pilih Avatar Mekanik</label>
+          <div class="avatar-grid">
+            <button class="avatar-option-btn" type="button" data-avatar="🧑‍🔧">
+              <span class="avatar-emoji">🧑‍🔧</span>
+              <span class="avatar-label">Mekanik</span>
+            </button>
+            <button class="avatar-option-btn" type="button" data-avatar="⚡">
+              <span class="avatar-emoji">⚡</span>
+              <span class="avatar-label">Kelistrikan</span>
+            </button>
+            <button class="avatar-option-btn" type="button" data-avatar="🏎️">
+              <span class="avatar-emoji">🏎️</span>
+              <span class="avatar-label">Pembalap</span>
+            </button>
+            <button class="avatar-option-btn" type="button" data-avatar="⚙️">
+              <span class="avatar-emoji">⚙️</span>
+              <span class="avatar-label">Mesin</span>
+            </button>
+            <button class="avatar-option-btn" type="button" data-avatar="🛠️">
+              <span class="avatar-emoji">🛠️</span>
+              <span class="avatar-label">Perkakas</span>
+            </button>
+          </div>
+        </div>
+
+        <form id="form-edit-profile" onsubmit="event.preventDefault();" style="margin-top: var(--sp-md);">
+          <div class="profile-form-group">
+            <label for="profile-name">Nama Lengkap</label>
+            <input type="text" id="profile-name" class="profile-input" placeholder="Nama Lengkap" required maxlength="30">
+          </div>
+          
+          <div class="profile-form-group">
+            <label for="profile-school">Asal Sekolah</label>
+            <input type="text" id="profile-school" class="profile-input" placeholder="Asal Sekolah Anda" required>
+          </div>
+
+          <!-- Read-only section -->
+          <div class="profile-info-grid">
+            <div class="profile-info-item">
+              <span class="info-label">NIS</span>
+              <span class="info-value" id="profile-display-nis">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="info-label">Kelas</span>
+              <span class="info-value" id="profile-display-kelas">-</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="info-label">WhatsApp</span>
+              <span class="info-value" id="profile-display-wa">-</span>
+            </div>
+          </div>
+
+          <div class="profile-buttons">
+            <button type="button" id="btn-close-profile" class="btn btn-secondary" style="flex: 1;">Batal</button>
+            <button type="submit" id="btn-save-profile" class="btn btn-primary" style="flex: 1;">Simpan 💾</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         TOAST / NOTIFICATION
+         ───────────────────────────────────────────────────── -->
+    <div id="toast" role="alert" aria-live="polite">
+      <span class="toast-icon">🏆</span>
+      <div class="toast-content">
+        <div class="toast-title">Pencapaian Baru!</div>
+        <div class="toast-message">Kamu mendapatkan badge "Langkah Pertama"</div>
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       JAVASCRIPT FILES
+       ═══════════════════════════════════════════════════════ -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/kiosk.js"></script>
+  <script src="js/swf-player.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/simulation.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
