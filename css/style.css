@@ -4272,6 +4272,260 @@ body.light-theme .screen-header {
   border-bottom: 1px solid rgba(13, 148, 136, 0.08);
 }
 
+/* ============================================================
+   WELCOME DASHBOARD ANIMATIONS & STYLES
+   ============================================================ */
+
+/* Keyframe Animations */
+@keyframes spin-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-counter-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes page-flip-right {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(-180deg); }
+}
+
+@keyframes wrench-tighten {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-25deg); }
+}
+
+@keyframes car-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes star-bounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.2) translateY(-6px); }
+}
+
+@keyframes check-pulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.4; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes line-draw {
+  0%, 100% { stroke-dashoffset: 40; }
+  50% { stroke-dashoffset: 0; }
+}
+
+@keyframes pulse-cta {
+  0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.5); transform: scale(1); }
+  50% { transform: scale(1.03); }
+  70% { box-shadow: 0 0 0 15px rgba(249, 115, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); transform: scale(1); }
+}
+
+@keyframes float-fluid {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(15px, -10px) rotate(4deg); }
+  66% { transform: translate(-10px, 15px) rotate(-3deg); }
+}
+
+/* Base Styles */
+.welcome-hero {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(249, 115, 22, 0.08) 100%) !important;
+  border: 1px solid rgba(13, 148, 136, 0.15) !important;
+  border-radius: 24px !important;
+  padding: var(--sp-2xl) var(--sp-lg) !important;
+  margin-bottom: var(--sp-2xl) !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md) !important;
+  animation: scaleIn 0.8s var(--transition-spring) forwards;
+}
+
+body.light-theme .welcome-hero {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%) !important;
+  border-color: rgba(13, 148, 136, 0.12) !important;
+}
+
+.welcome-fluid-decor-1 {
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 180px;
+  height: 180px;
+  background: rgba(13, 148, 136, 0.12);
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+  animation: float-fluid 10s ease-in-out infinite;
+}
+
+.welcome-fluid-decor-2 {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: rgba(249, 115, 22, 0.12);
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+  animation: float-fluid 8s ease-in-out infinite alternate;
+}
+
+.welcome-card-feat {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 20px !important;
+  padding: var(--sp-lg) !important;
+  text-align: left !important;
+  box-shadow: var(--shadow-sm) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-md) !important;
+  transition: all var(--transition-spring) !important;
+}
+
+.welcome-card-feat:hover {
+  transform: translateY(-8px);
+  border-color: var(--clr-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+body.light-theme .welcome-card-feat:hover {
+  border-color: var(--clr-secondary) !important;
+  box-shadow: 0 10px 25px rgba(13, 148, 136, 0.12) !important;
+}
+
+.welcome-anim-box {
+  height: 150px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  position: relative;
+  transition: background var(--transition-base);
+}
+
+.welcome-card-feat:hover .welcome-anim-box {
+  background: rgba(13, 148, 136, 0.05) !important;
+}
+
+/* step checklist block style */
+.welcome-steps-section {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: var(--sp-xl);
+  margin-top: var(--sp-3xl);
+  margin-bottom: var(--sp-3xl);
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.8s ease forwards;
+}
+
+body.light-theme .welcome-steps-section {
+  background: #f8fafc;
+  border-color: rgba(13, 148, 136, 0.1);
+}
+
+.welcome-steps-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-md);
+  margin-top: var(--sp-lg);
+}
+
+@media (min-width: 768px) {
+  .welcome-steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .welcome-steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.welcome-step-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: var(--sp-md);
+  display: flex;
+  gap: var(--sp-md);
+  align-items: flex-start;
+  transition: all var(--transition-base);
+}
+
+body.light-theme .welcome-step-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.welcome-step-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+body.light-theme .welcome-step-card:hover {
+  border-color: var(--clr-secondary);
+  box-shadow: 0 6px 15px rgba(13, 148, 136, 0.06);
+}
+
+.welcome-step-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.welcome-step-badge.orange {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+}
+
+.welcome-step-badge.teal {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);
+}
+
+.welcome-step-badge.green {
+  background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+  box-shadow: 0 4px 10px rgba(132, 204, 22, 0.3);
+}
+
+.welcome-step-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.welcome-step-info p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.welcome-cta-btn {
+  animation: pulse-cta 2.5s ease-in-out infinite !important;
+}
+
 
 
 
