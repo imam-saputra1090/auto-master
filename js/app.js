@@ -1664,13 +1664,15 @@ const App = {
       <div class="settings-section">
         <h3>🔌 Koneksi Database</h3>
         <div class="settings-field">
-          <label for="input-api-url">API URL Google Sheets (Terkunci):</label>
-          <div style="position: relative;">
+          <label for="input-api-url">API URL Google Sheets:</label>
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
             <input type="text" id="input-api-url" value="${currentApiUrl}" readonly 
-                   style="width:100%; padding:8px 10px 8px 30px; border-radius:4px; cursor:not-allowed;" />
-            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #888;">🔒</span>
+                   style="flex-grow: 1; padding: 8px 10px; border-radius: 4px; background: var(--bg-deep); border: 1px solid var(--border); color: var(--text-muted); cursor: not-allowed; font-size: 0.85rem;" />
+            <button id="btn-unlock-api" class="btn btn-secondary" type="button" style="flex-shrink: 0; padding: 8px 12px; font-size: 0.85rem;">
+              🔓 Ubah
+            </button>
           </div>
-          <small style="color: var(--text-muted); display: block; margin-top: 4px;">Info: Koneksi database dikunci oleh sistem agar tidak dapat diubah oleh siswa.</small>
+          <small style="color: var(--text-muted); display: block; margin-top: 6px;">Info: Secara default terkunci untuk mencegah siswa mengubahnya. Klik tombol "Ubah" untuk mengedit.</small>
         </div>
       </div>
 
@@ -1731,6 +1733,50 @@ const App = {
           ProgressManager.setPlayerName(newName);
           this.updatePlayerInfo();
           this.showToast('✅ Nama berhasil diperbarui!', 'success');
+        }
+      });
+    }
+
+    // Bind Unlock/Save API URL
+    const btnUnlockApi = document.getElementById('btn-unlock-api');
+    const inputApiUrl = document.getElementById('input-api-url');
+    if (btnUnlockApi && inputApiUrl) {
+      btnUnlockApi.addEventListener('click', () => {
+        const isReadOnly = inputApiUrl.hasAttribute('readonly');
+        if (isReadOnly) {
+          // Unlock
+          inputApiUrl.removeAttribute('readonly');
+          inputApiUrl.style.cursor = 'text';
+          inputApiUrl.style.color = 'var(--text-normal)';
+          inputApiUrl.style.background = 'var(--bg-card)';
+          inputApiUrl.focus();
+          btnUnlockApi.textContent = '💾 Simpan';
+          btnUnlockApi.classList.remove('btn-secondary');
+          btnUnlockApi.classList.add('btn-primary');
+        } else {
+          // Save
+          const newUrl = inputApiUrl.value.trim();
+          if (newUrl) {
+            localStorage.setItem('automaster_api_url', newUrl);
+            if (typeof AuthManager !== 'undefined') {
+              AuthManager.setApiUrl(newUrl);
+            }
+            this.showToast('✅ API URL database berhasil diperbarui!', 'success');
+            
+            // Re-lock
+            inputApiUrl.setAttribute('readonly', 'true');
+            inputApiUrl.style.cursor = 'not-allowed';
+            inputApiUrl.style.color = 'var(--text-muted)';
+            inputApiUrl.style.background = 'var(--bg-deep)';
+            btnUnlockApi.textContent = '🔓 Ubah';
+            btnUnlockApi.classList.remove('btn-primary');
+            btnUnlockApi.classList.add('btn-secondary');
+            
+            // Re-sync after URL change
+            this.syncProgressFromCloud();
+          } else {
+            this.showToast('⚠️ API URL tidak boleh kosong.', 'warning');
+          }
         }
       });
     }
