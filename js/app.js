@@ -38,6 +38,11 @@ const App = {
         document.body.classList.add('light-theme');
       }
 
+      // Inisialisasi AudioManager
+      if (typeof AudioManager !== 'undefined') {
+        AudioManager.playBGM();
+      }
+
       // Inisialisasi new modules
       if (typeof AuthManager !== 'undefined') {
         let savedApiUrl = localStorage.getItem('automaster_api_url');
@@ -67,8 +72,13 @@ const App = {
       // Setup network status indicators (online/offline dot)
       this.setupNetworkIndicator();
 
-      // Cek apakah pemain sudah login
-      if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
+      // Cek apakah guru atau pemain sudah login
+      const savedTeacherSecret = sessionStorage.getItem('automaster_teacher_secret');
+      if (savedTeacherSecret) {
+        this.teacherSecret = savedTeacherSecret;
+        this.showScreen('teacher');
+        this.refreshTeacherData();
+      } else if (typeof AuthManager !== 'undefined' && AuthManager.isLoggedIn()) {
         const session = AuthManager.getSession();
         if (session && session.nama) {
           ProgressManager.setPlayerName(session.nama);
@@ -564,6 +574,109 @@ const App = {
         }
       });
     }
+
+    // Toggle Guru/Siswa Login Form
+    const linkTeacher = document.getElementById('link-to-teacher-login');
+    const formLogin = document.getElementById('form-login');
+    const formTeacher = document.getElementById('form-teacher-login');
+    const loginCard = document.querySelector('#screen-login .auth-card');
+    const loginHeading = loginCard ? loginCard.querySelector('h2') : null;
+    
+    if (linkTeacher && formLogin && formTeacher) {
+      linkTeacher.addEventListener('click', () => {
+        if (formTeacher.style.display === 'none') {
+          formTeacher.style.display = 'block';
+          formLogin.style.display = 'none';
+          linkTeacher.textContent = 'Masuk sebagai Siswa 🧑‍🔧';
+          if (loginHeading) loginHeading.textContent = 'Area Guru 🧑‍🏫';
+        } else {
+          formTeacher.style.display = 'none';
+          formLogin.style.display = 'block';
+          linkTeacher.textContent = 'Masuk sebagai Guru 🧑‍🏫';
+          if (loginHeading) loginHeading.textContent = 'Masuk Mekanik';
+        }
+      });
+    }
+
+    // Form Login Guru Submit
+    if (formTeacher) {
+      formTeacher.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const secret = document.getElementById('teacher-password').value;
+        if (!secret) {
+          this.showToast('⚠️ Masukkan password guru.', 'warning');
+          return;
+        }
+        this.showToast('🔑 Memverifikasi password...', 'info');
+        try {
+          const url = `${AuthManager.API_URL}?action=getstudents&secret=${encodeURIComponent(secret)}`;
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Network response not ok');
+          const res = await response.json();
+          
+          if (res.success) {
+            this.showToast('🔓 Verifikasi sukses! Selamat datang, Guru.', 'success');
+            // Simpan secret agar bisa refresh
+            this.teacherSecret = secret;
+            sessionStorage.setItem('automaster_teacher_secret', secret);
+            
+            // Masuk ke Dasbor Guru
+            this.showScreen('teacher');
+            this.renderTeacherDashboard(res.data);
+          } else {
+            this.showToast(`❌ ${res.message}`, 'error');
+          }
+        } catch (err) {
+          console.error(err);
+          this.showToast('❌ Gagal menghubungi server database.', 'error');
+        }
+      });
+    }
+
+    // Back from teacher screen & Logout buttons
+    this._bindClick('btn-back-from-teacher', () => {
+      this.handleTeacherLogout();
+    });
+    this._bindClick('btn-teacher-logout', () => {
+      this.handleTeacherLogout();
+    });
+    this._bindClick('btn-refresh-teacher-data', () => {
+      this.refreshTeacherData();
+    });
+    this._bindClick('btn-save-db-url', () => {
+      const newUrl = document.getElementById('teacher-db-url').value.trim();
+      if (newUrl) {
+        localStorage.setItem('automaster_api_url', newUrl);
+        AuthManager.setApiUrl(newUrl);
+        this.showToast('✅ API URL database berhasil disimpan!', 'success');
+        this.refreshTeacherData();
+      } else {
+        this.showToast('⚠️ API URL tidak boleh kosong.', 'warning');
+      }
+    });
+
+    // Class filter & Student search changes
+    const classFilter = document.getElementById('teacher-class-filter');
+    if (classFilter) {
+      classFilter.addEventListener('change', () => {
+        this.filterTeacherData();
+      });
+    }
+
+    const studentSearch = document.getElementById('teacher-student-search');
+    if (studentSearch) {
+      studentSearch.addEventListener('input', () => {
+        this.filterTeacherData();
+      });
+    }
+
+    // Global click sound player
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button, .btn, .level-card, .menu-item, a');
+      if (btn && typeof AudioManager !== 'undefined') {
+        AudioManager.playSFX('click');
+      }
+    });
   },
 
   /**
@@ -1649,7 +1762,6 @@ const App = {
 
     const data = ProgressManager.getPlayerData();
     const session = (typeof AuthManager !== 'undefined') ? AuthManager.getSession() : null;
-    const currentApiUrl = localStorage.getItem('automaster_api_url') || 'https://script.google.com/macros/s/AKfycbyF7CfDM7Bl6QcYESb0WkjhhrysDN4J8RtVedzZvnc2A7UMyWQtGqUMTxHcEw8zaa52/exec';
 
     container.innerHTML = `
       <div class="settings-section">
@@ -1662,17 +1774,33 @@ const App = {
       </div>
 
       <div class="settings-section">
-        <h3>🔌 Koneksi Database</h3>
-        <div class="settings-field">
-          <label for="input-api-url">API URL Google Sheets:</label>
-          <div style="display: flex; gap: 8px; margin-top: 4px;">
-            <input type="text" id="input-api-url" value="${currentApiUrl}" readonly 
-                   style="flex-grow: 1; padding: 8px 10px; border-radius: 4px; background: var(--bg-deep); border: 1px solid var(--border); color: var(--text-muted); cursor: not-allowed; font-size: 0.85rem;" />
-            <button id="btn-unlock-api" class="btn btn-secondary" type="button" style="flex-shrink: 0; padding: 8px 12px; font-size: 0.85rem;">
-              🔓 Ubah
-            </button>
+        <h3>🎵 Pengaturan Audio</h3>
+        <div class="settings-field" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="margin-bottom: 0; font-weight: 500;">Musik Latar (BGM) 🎵</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-music" ${!AudioManager.isBgmMuted ? 'checked' : ''}>
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          <small style="color: var(--text-muted); display: block; margin-top: 6px;">Info: Secara default terkunci untuk mencegah siswa mengubahnya. Klik tombol "Ubah" untuk mengedit.</small>
+          <div style="margin-top: 8px;">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Volume Musik</span>
+            <input type="range" id="volume-music" min="0" max="1" step="0.05" value="${AudioManager.bgmVolume}" style="width: 100%; height: 6px; border-radius: 3px; accent-color: var(--clr-primary); background: rgba(255,255,255,0.1); outline: none; margin-top: 4px;">
+          </div>
+        </div>
+
+        <div class="settings-field">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="margin-bottom: 0; font-weight: 500;">Efek Suara (SFX) 🔊</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-sound" ${!AudioManager.isSfxMuted ? 'checked' : ''}>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="margin-top: 8px;">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Volume Efek Suara</span>
+            <input type="range" id="volume-sound" min="0" max="1" step="0.05" value="${AudioManager.sfxVolume}" style="width: 100%; height: 6px; border-radius: 3px; accent-color: var(--clr-secondary); background: rgba(255,255,255,0.1); outline: none; margin-top: 4px;">
+          </div>
         </div>
       </div>
 
@@ -1720,7 +1848,7 @@ const App = {
         <h3>ℹ️ Tentang</h3>
         <p><strong>AutoMaster — Bengkel Virtual</strong></p>
         <p>Game edukasi interaktif untuk siswa SMK jurusan Teknik Kendaraan Ringan.</p>
-        <p>Versi 2.0 — 2026</p>
+        <p>Versi 2.1 — 2026</p>
       </div>
     `;
 
@@ -1737,47 +1865,32 @@ const App = {
       });
     }
 
-    // Bind Unlock/Save API URL
-    const btnUnlockApi = document.getElementById('btn-unlock-api');
-    const inputApiUrl = document.getElementById('input-api-url');
-    if (btnUnlockApi && inputApiUrl) {
-      btnUnlockApi.addEventListener('click', () => {
-        const isReadOnly = inputApiUrl.hasAttribute('readonly');
-        if (isReadOnly) {
-          // Unlock
-          inputApiUrl.removeAttribute('readonly');
-          inputApiUrl.style.cursor = 'text';
-          inputApiUrl.style.color = 'var(--text-normal)';
-          inputApiUrl.style.background = 'var(--bg-card)';
-          inputApiUrl.focus();
-          btnUnlockApi.textContent = '💾 Simpan';
-          btnUnlockApi.classList.remove('btn-secondary');
-          btnUnlockApi.classList.add('btn-primary');
-        } else {
-          // Save
-          const newUrl = inputApiUrl.value.trim();
-          if (newUrl) {
-            localStorage.setItem('automaster_api_url', newUrl);
-            if (typeof AuthManager !== 'undefined') {
-              AuthManager.setApiUrl(newUrl);
-            }
-            this.showToast('✅ API URL database berhasil diperbarui!', 'success');
-            
-            // Re-lock
-            inputApiUrl.setAttribute('readonly', 'true');
-            inputApiUrl.style.cursor = 'not-allowed';
-            inputApiUrl.style.color = 'var(--text-muted)';
-            inputApiUrl.style.background = 'var(--bg-deep)';
-            btnUnlockApi.textContent = '🔓 Ubah';
-            btnUnlockApi.classList.remove('btn-primary');
-            btnUnlockApi.classList.add('btn-secondary');
-            
-            // Re-sync after URL change
-            this.syncProgressFromCloud();
-          } else {
-            this.showToast('⚠️ API URL tidak boleh kosong.', 'warning');
-          }
-        }
+    // Bind Audio Controls
+    const toggleMusic = document.getElementById('toggle-music');
+    if (toggleMusic) {
+      toggleMusic.addEventListener('change', () => {
+        AudioManager.toggleBGMMute();
+      });
+    }
+
+    const toggleSound = document.getElementById('toggle-sound');
+    if (toggleSound) {
+      toggleSound.addEventListener('change', () => {
+        AudioManager.toggleSFXMute();
+      });
+    }
+
+    const volumeMusic = document.getElementById('volume-music');
+    if (volumeMusic) {
+      volumeMusic.addEventListener('input', (e) => {
+        AudioManager.setBGMVolume(parseFloat(e.target.value));
+      });
+    }
+
+    const volumeSound = document.getElementById('volume-sound');
+    if (volumeSound) {
+      volumeSound.addEventListener('input', (e) => {
+        AudioManager.setSFXVolume(parseFloat(e.target.value));
       });
     }
 
@@ -2141,8 +2254,320 @@ const App = {
       },
       'Ya, Keluar'
     );
+  },
+
+  handleTeacherLogout() {
+    this.teacherSecret = null;
+    sessionStorage.removeItem('automaster_teacher_secret');
+    this.showScreen('login');
+    this.showToast('👋 Berhasil keluar dari dasbor guru.', 'info');
+  },
+
+  async refreshTeacherData() {
+    const secret = this.teacherSecret;
+    if (!secret) return;
+    this.showToast('🔄 Memperbarui data...', 'info');
+    try {
+      const url = `${AuthManager.API_URL}?action=getstudents&secret=${encodeURIComponent(secret)}`;
+      const response = await fetch(url);
+      const res = await response.json();
+      if (res.success) {
+        this.renderTeacherDashboard(res.data);
+        this.showToast('✅ Data berhasil diperbarui!', 'success');
+      } else {
+        this.showToast(`❌ ${res.message}`, 'error');
+      }
+    } catch (e) {
+      this.showToast('❌ Gagal menyinkronkan data.', 'error');
+    }
+  },
+
+  renderTeacherDashboard(data) {
+    this.teacherData = data;
+    
+    // Set database URL input
+    const dbUrlInput = document.getElementById('teacher-db-url');
+    if (dbUrlInput) {
+      dbUrlInput.value = AuthManager.API_URL;
+    }
+
+    // Populate class filter dropdown if it has only one option (default)
+    const classFilter = document.getElementById('teacher-class-filter');
+    if (classFilter && data.students) {
+      const uniqueClasses = [...new Set(data.students.map(s => s.kelas).filter(Boolean))].sort();
+      let optionsHtml = '<option value="">Semua Kelas</option>';
+      uniqueClasses.forEach(c => {
+        optionsHtml += `<option value="${c}">${c}</option>`;
+      });
+      const currentSelected = classFilter.value;
+      classFilter.innerHTML = optionsHtml;
+      if (uniqueClasses.includes(currentSelected)) {
+        classFilter.value = currentSelected;
+      }
+    }
+
+    // Render session logs
+    const sessionLogsEl = document.getElementById('teacher-session-logs');
+    if (sessionLogsEl && data.recentSessions) {
+      if (data.recentSessions.length > 0) {
+        sessionLogsEl.innerHTML = data.recentSessions.map(s => {
+          return `<div style="margin-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px;">
+            <span style="color: var(--clr-primary); font-weight:600;">[${s.loginTime}]</span> 
+            <strong>${s.nama}</strong> (Kelas: ${s.kelas || '-'}, NIS: ${s.nis}) 
+            masuk via <em>${s.device}</em>
+          </div>`;
+        }).join('');
+      } else {
+        sessionLogsEl.innerHTML = '<div style="color: var(--text-muted);">Belum ada log masuk.</div>';
+      }
+    }
+
+    // Run filtering and render KPIs + Charts + Table
+    this.filterTeacherData();
+  },
+
+  filterTeacherData() {
+    if (!this.teacherData || !this.teacherData.students) return;
+
+    const classFilterVal = document.getElementById('teacher-class-filter')?.value || '';
+    const searchVal = document.getElementById('teacher-student-search')?.value.toLowerCase().trim() || '';
+
+    // Filter students
+    let filteredStudents = this.teacherData.students;
+    if (classFilterVal) {
+      filteredStudents = filteredStudents.filter(s => s.kelas === classFilterVal);
+    }
+    if (searchVal) {
+      filteredStudents = filteredStudents.filter(s => 
+        (s.nama || '').toLowerCase().includes(searchVal) || 
+        (s.nis || '').includes(searchVal)
+      );
+    }
+
+    // Calculate metrics
+    const totalStudents = filteredStudents.length;
+    let totalScore = 0;
+    let totalXP = 0;
+    filteredStudents.forEach(s => {
+      totalScore += s.progress?.totalScore || 0;
+      totalXP += s.progress?.totalXP || 0;
+    });
+
+    const avgScore = totalStudents > 0 ? Math.round(totalScore / totalStudents) : 0;
+    const avgXP = totalStudents > 0 ? Math.round(totalXP / totalStudents) : 0;
+
+    // Active Today count (Jakarta timezone YYYY-MM-DD)
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    let activeTodayCount = 0;
+    if (this.teacherData.recentSessions) {
+      const filteredNisSet = new Set(filteredStudents.map(s => s.nis));
+      const activeNisSet = new Set();
+      this.teacherData.recentSessions.forEach(s => {
+        if (s.loginTime.startsWith(todayStr) && filteredNisSet.has(s.nis)) {
+          activeNisSet.add(s.nis);
+        }
+      });
+      activeTodayCount = activeNisSet.size;
+    }
+
+    // Update KPI UI elements
+    const totalStudentsEl = document.getElementById('teacher-metric-total-students');
+    const avgScoreEl = document.getElementById('teacher-metric-avg-score');
+    const avgXpEl = document.getElementById('teacher-metric-avg-xp');
+    const activeTodayEl = document.getElementById('teacher-metric-active-today');
+    
+    if (totalStudentsEl) totalStudentsEl.textContent = totalStudents;
+    if (avgScoreEl) avgScoreEl.textContent = avgScore;
+    if (avgXpEl) avgXpEl.textContent = avgXP;
+    if (activeTodayEl) activeTodayEl.textContent = activeTodayCount;
+
+    // Render Table
+    const tbody = document.getElementById('teacher-student-tbody');
+    if (tbody) {
+      if (filteredStudents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="14" style="text-align: center; padding: 30px; color: var(--text-muted);">Tidak ada data siswa yang cocok dengan filter.</td></tr>`;
+      } else {
+        tbody.innerHTML = filteredStudents.map(s => {
+          const waFormatted = s.wa ? (s.wa.startsWith('0') ? '62' + s.wa.slice(1) : s.wa) : '';
+          const waLink = waFormatted ? `<a href="https://wa.me/${waFormatted}" target="_blank" style="color: var(--clr-primary); text-decoration: underline; font-weight: 500;">${s.wa}</a>` : '-';
+          
+          const completedLevels = s.progress?.completedLevels || [];
+          const l1 = completedLevels.includes('1') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          const l2 = completedLevels.includes('2') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          const l3 = completedLevels.includes('3') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          const l4 = completedLevels.includes('4') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          const l5 = completedLevels.includes('5') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          const l6 = completedLevels.includes('6') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
+          
+          let predikat = 'Pemula';
+          const xp = s.progress?.totalXP || 0;
+          if (xp >= 5000) predikat = '🛠️ Master Mekanik';
+          else if (xp >= 3000) predikat = '⚙️ Mekanik Senior';
+          else if (xp >= 1000) predikat = '🔧 Asisten Mekanik';
+
+          return `<tr>
+            <td style="padding: 10px 8px; font-weight:500;">${s.nama}</td>
+            <td style="padding: 10px 8px;">${s.nis}</td>
+            <td style="padding: 10px 8px;">${s.kelas || '-'}</td>
+            <td style="padding: 10px 8px;">${waLink}</td>
+            <td style="padding: 10px 8px; text-align: center; font-weight:600;">${s.progress?.totalScore || 0}</td>
+            <td style="padding: 10px 8px; text-align: center; color:#f59e0b;">⭐ ${s.progress?.totalStars || 0}</td>
+            <td style="padding: 10px 8px; text-align: center; font-weight:600; color:#10b981;">${xp}</td>
+            <td style="padding: 10px 8px; font-size:0.8rem; font-weight:500;">${predikat}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l1}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l2}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l3}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l4}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l5}</td>
+            <td style="padding: 10px 4px; text-align: center;">${l6}</td>
+          </tr>`;
+        }).join('');
+      }
+    }
+
+    // Render Charts
+    this.updateCharts(filteredStudents);
+  },
+
+  updateCharts(students) {
+    if (!this.charts) {
+      this.charts = { completion: null, xp: null };
+    }
+
+    if (typeof Chart === 'undefined') {
+      console.warn('[App] Chart.js is not loaded.');
+      return;
+    }
+
+    // Destroy existing charts
+    if (this.charts.completion) {
+      this.charts.completion.destroy();
+      this.charts.completion = null;
+    }
+    if (this.charts.xp) {
+      this.charts.xp.destroy();
+      this.charts.xp = null;
+    }
+
+    const total = students.length;
+    if (total === 0) return;
+
+    // 1. Completion Chart (Level 1-6)
+    const levels = ['1', '2', '3', '4', '5', '6'];
+    const completionPercentages = levels.map(lvl => {
+      const completedCount = students.filter(s => {
+        const completedLevels = s.progress?.completedLevels || [];
+        return completedLevels.includes(lvl);
+      }).length;
+      return Math.round((completedCount / total) * 100);
+    });
+
+    const completionCtx = document.getElementById('chart-level-completion');
+    if (completionCtx) {
+      const isLightTheme = document.body.classList.contains('light-theme');
+      const textColor = isLightTheme ? '#4b5563' : '#9ca3af';
+      const gridColor = isLightTheme ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+
+      this.charts.completion = new Chart(completionCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Lvl 1: Dasar', 'Lvl 2: Engine', 'Lvl 3: Rem', 'Lvl 4: Transmisi', 'Lvl 5: Listrik', 'Lvl 6: Diagnosis'],
+          datasets: [{
+            label: 'Persentase Ketuntasan (%)',
+            data: completionPercentages,
+            backgroundColor: 'rgba(255, 107, 53, 0.6)',
+            borderColor: 'rgba(255, 107, 53, 1)',
+            borderWidth: 1.5,
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) { return ` ${context.parsed.y}% Siswa`; }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: gridColor },
+              ticks: { color: textColor }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: textColor }
+            }
+          }
+        }
+      });
+    }
+
+    // 2. XP Distribution Chart
+    const xpRanges = {
+      'Pemula (<1000 XP)': 0,
+      'Asisten (1000-3000 XP)': 0,
+      'Senior (3001-5000 XP)': 0,
+      'Master (>5000 XP)': 0
+    };
+
+    students.forEach(s => {
+      const xp = s.progress?.totalXP || 0;
+      if (xp >= 5000) xpRanges['Master (>5000 XP)']++;
+      else if (xp >= 3001) xpRanges['Senior (3001-5000 XP)']++;
+      else if (xp >= 1000) xpRanges['Asisten (1000-3000 XP)']++;
+      else xpRanges['Pemula (<1000 XP)']++;
+    });
+
+    const xpCtx = document.getElementById('chart-xp-distribution');
+    if (xpCtx) {
+      const isLightTheme = document.body.classList.contains('light-theme');
+      const textColor = isLightTheme ? '#4b5563' : '#d1d5db';
+
+      this.charts.xp = new Chart(xpCtx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(xpRanges),
+          datasets: [{
+            data: Object.values(xpRanges),
+            backgroundColor: [
+              'rgba(239, 68, 68, 0.65)',
+              'rgba(245, 158, 11, 0.65)',
+              'rgba(59, 130, 246, 0.65)',
+              'rgba(16, 185, 129, 0.65)'
+            ],
+            borderColor: [
+              'rgba(239, 68, 68, 1)',
+              'rgba(245, 158, 11, 1)',
+              'rgba(59, 130, 246, 1)',
+              'rgba(16, 185, 129, 1)'
+            ],
+            borderWidth: 1.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                color: textColor,
+                boxWidth: 12,
+                font: { size: 10 }
+              }
+            }
+          }
+        }
+      });
+    }
   }
-};
+  },
 
 // ════════════════════════════════════════════════════════════
 //  INISIALISASI SAAT DOM SIAP

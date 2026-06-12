@@ -165,6 +165,11 @@ const QuizEngine = {
     const correctIndex = question.correct !== undefined ? question.correct : question.answer;
     const isCorrect = selectedIndex === correctIndex;
 
+    // Play SFX
+    if (typeof AudioManager !== 'undefined') {
+      AudioManager.playSFX(isCorrect ? 'correct' : 'wrong');
+    }
+
     // Update skor
     if (isCorrect) {
       this.score++;

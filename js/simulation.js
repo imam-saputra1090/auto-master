@@ -546,6 +546,11 @@ const SimulationEngine = {
     // Cek apakah penempatan benar
     const isCorrect = component.correctZone === zoneId;
 
+    // Play SFX
+    if (typeof AudioManager !== 'undefined') {
+      AudioManager.playSFX(isCorrect ? 'correct' : 'wrong');
+    }
+
     if (isCorrect) {
       // ── BENAR: Tempatkan komponen ──
       zoneEl.classList.add('placed-correct');
