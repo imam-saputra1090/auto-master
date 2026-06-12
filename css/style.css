@@ -5043,6 +5043,322 @@ body.light-theme .library-card-progress-bar {
   to { opacity: 1; stroke-width: 4px; filter: drop-shadow(0 0 5px #f97316); }
 }
 
+/* ==========================================================================
+   NEON GAMIFIED UI: PLAYER PROFILE LICENSE & CHIP-CARDS
+   ========================================================================== */
+
+/* 1. RGB Rotating Border Profile Box (#player-info) */
+#player-info {
+  position: relative !important;
+  background: #0b0f19 !important;
+  border-radius: var(--radius-xl) !important;
+  overflow: hidden !important;
+  z-index: 2 !important;
+  padding: var(--sp-md) var(--sp-lg) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(13, 148, 136, 0.3) !important;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+}
+#player-info::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, #ff4500, #ff8c00, #00f2fe, #4facfe, #00ff00, #ff007f, #ff4500);
+  animation: rotate-border-gradient 8s linear infinite;
+  z-index: -2;
+}
+#player-info::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, #0b0f19 0%, #151d30 100%) !important;
+  border-radius: calc(var(--radius-xl) - 2px) !important;
+  z-index: -1;
+}
+body.light-theme #player-info::after {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+}
+
+/* 2. Avatar Energy Halo Ring */
+.player-avatar-wrapper {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-ring {
+  position: absolute;
+  top: -4px; left: -4px; right: -4px; bottom: -4px;
+  border-radius: 50%;
+  border: 2px dashed #00f2fe;
+  animation: rotate-avatar-ring 12s linear infinite;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+}
+@keyframes rotate-avatar-ring {
+  0% { transform: rotate(0deg); stroke: #00f2fe; }
+  50% { stroke: #ff007f; }
+  100% { transform: rotate(360deg); stroke: #00f2fe; }
+}
+.player-avatar {
+  border-radius: 50% !important;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 3. Motivational Slogan Banner */
+.player-motivate-slogan {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: 8px 12px;
+  background: rgba(13, 148, 136, 0.08);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--clr-primary);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  animation: slogan-pulse 3s ease-in-out infinite alternate;
+}
+body.light-theme .player-motivate-slogan {
+  background: rgba(13, 148, 136, 0.05);
+  color: #0f766e;
+}
+@keyframes slogan-pulse {
+  0% { box-shadow: 0 0 0 rgba(13, 148, 136, 0); }
+  100% { box-shadow: 0 0 8px rgba(13, 148, 136, 0.15); background: rgba(13, 148, 136, 0.12); }
+}
+
+/* 4. Speedometer Progress Bar & Tachometer ticks */
+.xp-bar {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  height: 12px !important;
+  border-radius: 6px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+body.light-theme .xp-bar {
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+}
+.xp-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: linear-gradient(90deg, transparent 85%, rgba(255, 255, 255, 0.15) 85%);
+  background-size: 10% 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+.xp-bar-fill {
+  background: linear-gradient(90deg, #ff4500, #ff8c00, #00ff00) !important;
+  background-size: 200% auto !important;
+  animation: shift-gradient 4s linear infinite !important;
+  height: 100% !important;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+@keyframes shift-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 5. Desktop Grid Layout Override */
+#player-info {
+  display: grid !important;
+  grid-template-columns: 64px 1.2fr auto auto !important;
+  grid-template-rows: auto auto !important;
+  grid-template-areas:
+    "avatar details stars actions"
+    "avatar slogan slogan slogan" !important;
+  gap: var(--sp-sm) var(--sp-md) !important;
+  align-items: center !important;
+}
+
+/* 6. Mobile Responsive Layout Override */
+@media (max-width: 576px) {
+  #player-info {
+    display: grid !important;
+    grid-template-columns: 56px 1fr !important;
+    grid-template-rows: auto auto auto auto !important;
+    grid-template-areas:
+      "avatar details"
+      "stars details"
+      "actions actions"
+      "slogan slogan" !important;
+    gap: var(--sp-xs) var(--sp-sm) !important;
+    padding: var(--sp-md) !important;
+  }
+  .player-avatar-wrapper {
+    grid-area: avatar;
+    justify-self: center;
+  }
+  .player-stars {
+    grid-area: stars;
+    justify-self: center;
+    margin-top: 4px;
+  }
+  .player-details {
+    grid-area: details;
+  }
+  .player-actions {
+    grid-area: actions;
+  }
+  .player-motivate-slogan {
+    grid-area: slogan;
+  }
+}
+
+/* 7. Level chip card custom themes (RGB mapping) */
+.level-card[data-level="1"] { --level-color: #ef4444; --level-glow: rgba(239, 68, 68, 0.3); }
+.level-card[data-level="2"] { --level-color: #f97316; --level-glow: rgba(249, 115, 22, 0.3); }
+.level-card[data-level="3"] { --level-color: #eab308; --level-glow: rgba(234, 179, 8, 0.3); }
+.level-card[data-level="4"] { --level-color: #3b82f6; --level-glow: rgba(59, 130, 246, 0.3); }
+.level-card[data-level="5"] { --level-color: #a855f7; --level-glow: rgba(168, 85, 247, 0.3); }
+.level-card[data-level="6"] { --level-color: #10b981; --level-glow: rgba(16, 185, 129, 0.3); }
+
+/* Level card styling overrides */
+.level-card {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--radius-xl) !important;
+  border: 2px solid rgba(255, 255, 255, 0.08) !important;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+  transition: all var(--transition-spring) !important;
+}
+body.light-theme .level-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.98) 100%) !important;
+  border: 2px solid rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.level-card:not(.locked):hover {
+  transform: translateY(-6px) scale(1.02) !important;
+  border-color: var(--level-color) !important;
+  box-shadow: 0 12px 30px var(--level-glow), inset 0 0 15px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Level SVG specific styles */
+.svg-level {
+  color: var(--level-color);
+  filter: drop-shadow(0 0 6px var(--level-glow));
+  transition: transform 0.3s ease;
+}
+.level-card:hover .svg-level {
+  transform: scale(1.1);
+}
+
+/* SVGs rotation animations */
+.spin-cw {
+  animation: spin-clockwise 10s linear infinite;
+  transform-origin: center;
+}
+.spin-ccw {
+  animation: spin-counter-clockwise 8s linear infinite;
+  transform-origin: center;
+}
+.pulse-glow {
+  animation: pulse-glow-anim 2s ease-in-out infinite alternate;
+}
+@keyframes pulse-glow-anim {
+  from { opacity: 0.6; filter: drop-shadow(0 0 2px var(--level-color)); }
+  to { opacity: 1; filter: drop-shadow(0 0 8px var(--level-color)); }
+}
+
+/* Level Progress Bar inside card */
+.level-progress-bar {
+  background: rgba(0, 0, 0, 0.3) !important;
+  height: 8px !important;
+  border-radius: var(--radius-full) !important;
+  overflow: hidden;
+  margin-top: 8px;
+}
+body.light-theme .level-progress-bar {
+  background: #e2e8f0 !important;
+}
+.level-progress-fill {
+  background: linear-gradient(90deg, var(--level-color), #ffffff) !important;
+  box-shadow: 0 0 8px var(--level-color);
+  border-radius: var(--radius-full) !important;
+}
+
+/* Game Badges */
+.badge-status-level {
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  padding: 3px 8px !important;
+  border-radius: var(--radius-sm) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  text-align: center;
+}
+.badge-completed {
+  background: rgba(234, 179, 8, 0.15) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(234, 179, 8, 0.3) !important;
+}
+.badge-active {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  animation: badge-glow-active 2s infinite alternate;
+}
+.badge-locked {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+}
+
+@keyframes badge-glow-active {
+  from { box-shadow: 0 0 2px rgba(59, 130, 246, 0.2); }
+  to { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+}
+
+/* Locked state Overlay */
+.level-card.locked {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(239, 68, 68, 0.12) !important;
+  opacity: 0.75 !important;
+  pointer-events: none;
+}
+.level-card.locked::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 14, 23, 0.45);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+  border-radius: inherit;
+  z-index: 10;
+}
+.level-card.locked .level-info {
+  opacity: 0.5;
+}
+.level-card.locked .level-icon {
+  opacity: 0.4;
+  color: #64748b !important;
+}
+.level-card.locked .level-meta {
+  z-index: 11;
+}
+.level-card.locked .level-lock {
+  font-size: 1.4rem;
+  color: #ef4444;
+  animation: pulse-lock 1.5s ease-in-out infinite;
+  display: inline-block;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+}
+
+@keyframes rotate-border-gradient {
+  100% { transform: rotate(360deg); }
+}
+
+
 
 
 
