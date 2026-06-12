@@ -718,22 +718,27 @@ const App = {
       }
 
       card.innerHTML = `
-        <div class="level-card-header">
-          <span class="level-icon">${level.icon || '📘'}</span>
-          <span class="level-number">Level ${levelId}</span>
-          ${!finalUnlocked ? '<span class="level-lock">🔒</span>' : ''}
+        <div class="level-icon">${level.icon || '📘'}</div>
+        <div class="level-info">
+          <div class="level-number" style="font-size: 0.72rem; color: var(--clr-primary); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Level ${levelId}</div>
+          <h3 class="level-title" style="margin: 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25;">${level.title || 'Level ' + levelId}</h3>
+          <p class="level-desc" style="font-size: 0.78rem; color: var(--text-muted); margin: 3px 0 6px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25;">${level.description || ''}</p>
+          ${finalUnlocked ? `
+            <div class="level-progress-bar" style="margin-bottom: 0;">
+              <div class="level-progress-fill" style="width: ${completionPercent}%"></div>
+            </div>
+          ` : `
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-style: italic;">
+              ${isLevel6Special ? '🔒 Selesaikan Level 1–5' : '🔒 Selesaikan level sebelumnya'}
+            </div>
+          `}
         </div>
-        <h3 class="level-title">${level.title || 'Level ' + levelId}</h3>
-        <p class="level-desc">${level.description || ''}</p>
-        <div class="level-stars">${starsHTML}</div>
-        ${finalUnlocked ? `
-          <div class="level-progress-bar">
-            <div class="level-progress-fill" style="width: ${completionPercent}%"></div>
-          </div>
-          <span class="level-progress-text">${completionPercent}% selesai</span>
-        ` : `
-          <span class="level-locked-text">${isLevel6Special ? 'Selesaikan Level 1–5' : 'Selesaikan level sebelumnya'}</span>
-        `}
+        <div class="level-meta">
+          ${!finalUnlocked ? '<span class="level-lock">🔒</span>' : `
+            <div class="stars">${starsHTML}</div>
+            <span class="level-progress-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block; font-weight: 500;">${completionPercent}% selesai</span>
+          `}
+        </div>
       `;
 
       container.appendChild(card);
@@ -1735,7 +1740,7 @@ const App = {
   _renderStars(stars) {
     let html = '';
     for (let i = 1; i <= 3; i++) {
-      html += `<span class="star ${i <= stars ? 'earned' : 'empty'}">${i <= stars ? '⭐' : '☆'}</span>`;
+      html += `<span class="star ${i <= stars ? 'filled' : 'empty'}">${i <= stars ? '⭐' : '☆'}</span>`;
     }
     return html;
   },
