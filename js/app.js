@@ -2391,7 +2391,7 @@ const App = {
           const waFormatted = s.wa ? (s.wa.startsWith('0') ? '62' + s.wa.slice(1) : s.wa) : '';
           const waLink = waFormatted ? `<a href="https://wa.me/${waFormatted}" target="_blank" style="color: var(--clr-primary); text-decoration: underline; font-weight: 500;">${s.wa}</a>` : '-';
           
-          const completedLevels = s.progress?.completedLevels || [];
+          const completedLevels = (s.progress?.completedLevels || []).map(String);
           const l1 = completedLevels.includes('1') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
           const l2 = completedLevels.includes('2') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
           const l3 = completedLevels.includes('3') ? '<span style="color:#10b981; font-weight:bold;">✅</span>' : '<span style="color:#ef4444; font-weight:bold;">❌</span>';
@@ -2456,7 +2456,7 @@ const App = {
     const levels = ['1', '2', '3', '4', '5', '6'];
     const completionPercentages = levels.map(lvl => {
       const completedCount = students.filter(s => {
-        const completedLevels = s.progress?.completedLevels || [];
+        const completedLevels = (s.progress?.completedLevels || []).map(String);
         return completedLevels.includes(lvl);
       }).length;
       return Math.round((completedCount / total) * 100);
