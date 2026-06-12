@@ -1664,6 +1664,88 @@ const App = {
   /**
    * Merender perpustakaan referensi materi.
    */
+  _getLibraryIconSvg(levelId) {
+    switch(levelId) {
+      case 1:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-rem">
+          <g class="anim-rotor-spin" style="transform-origin: 40px 40px;">
+            <circle cx="40" cy="40" r="28" fill="none" stroke="#64748b" stroke-width="4" />
+            <circle cx="40" cy="40" r="20" fill="none" stroke="#cbd5e1" stroke-width="6" stroke-dasharray="6, 6" />
+            <circle cx="40" cy="40" r="12" fill="none" stroke="#475569" stroke-width="2" />
+          </g>
+          <g class="anim-caliper-clamp" style="transform-origin: 58px 22px;">
+            <path d="M 50 12 C 55 12 66 16 66 24 C 66 32 55 36 50 36 L 54 28 L 54 20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" />
+            <rect x="44" y="18" width="6" height="12" rx="1" fill="#1e293b" />
+          </g>
+        </svg>`;
+      case 2:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-mesin">
+          <path d="M 25 15 L 25 65 M 55 15 L 55 65" stroke="#475569" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+          <g class="anim-conrod-move" style="transform-origin: 40px 60px;">
+            <line x1="40" y1="40" x2="40" y2="60" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" />
+            <circle cx="40" cy="60" r="6" fill="#64748b" />
+          </g>
+          <g class="anim-piston-move" style="transform-origin: 40px 32px;">
+            <rect x="28" y="18" width="24" height="20" rx="3" fill="#0ea5e9" stroke="#ffffff" stroke-width="1.5" />
+            <line x1="28" y1="23" x2="52" y2="23" stroke="#ffffff" stroke-width="1.5" />
+            <line x1="28" y1="28" x2="52" y2="28" stroke="#ffffff" stroke-width="1.5" />
+            <circle cx="40" cy="30" r="4.5" fill="#1e293b" stroke="#ffffff" stroke-width="1" />
+          </g>
+          <path d="M 36 8 L 40 14 L 44 8" stroke="#ffc300" stroke-width="2.5" fill="none" stroke-linecap="round" class="anim-spark-flash" />
+        </svg>`;
+      case 3:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-listrik">
+          <rect x="22" y="24" width="36" height="34" rx="4" fill="none" stroke="#eab308" stroke-width="3" />
+          <rect x="28" y="16" width="6" height="8" rx="1" fill="#eab308" />
+          <rect x="46" y="16" width="6" height="8" rx="1" fill="#eab308" />
+          <text x="31" y="36" fill="#eab308" font-size="10" font-weight="900" text-anchor="middle">-</text>
+          <text x="49" y="36" fill="#eab308" font-size="10" font-weight="900" text-anchor="middle">+</text>
+          <g class="anim-lightning" style="transform-origin: 40px 40px;">
+            <path d="M 42 28 L 32 42 L 39 42 L 36 54 L 48 38 L 41 38 Z" fill="#eab308" stroke="#ffffff" stroke-width="1" />
+          </g>
+        </svg>`;
+      case 4:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-transmisi">
+          <g transform="translate(32, 45) scale(0.95)" class="anim-gear-cw-slow" style="transform-origin: 0px 0px;">
+            <circle cx="0" cy="0" r="16" fill="none" stroke="#a855f7" stroke-width="3" />
+            <circle cx="0" cy="0" r="5" fill="none" stroke="#a855f7" stroke-width="2.5" />
+            <path d="M 0 -16 L 0 -21 M 0 16 L 0 21 M -16 0 L -21 0 M 16 0 L 21 0 M 11.3 -11.3 L 14.8 -14.8 M -11.3 11.3 L -14.8 14.8 M -11.3 -11.3 L -14.8 -14.8 M 11.3 11.3 L 14.8 14.8" stroke="#a855f7" stroke-width="3" stroke-linecap="round" />
+          </g>
+          <g transform="translate(52, 25) scale(0.65)" class="anim-gear-ccw-slow" style="transform-origin: 0px 0px;">
+            <circle cx="0" cy="0" r="16" fill="none" stroke="#ffffff" stroke-width="3" />
+            <circle cx="0" cy="0" r="5" fill="none" stroke="#ffffff" stroke-width="2.5" />
+            <path d="M 0 -16 L 0 -21 M 0 16 L 0 21 M -16 0 L -21 0 M 16 0 L 21 0 M 11.3 -11.3 L 14.8 -14.8 M -11.3 11.3 L -14.8 14.8 M -11.3 -11.3 L -14.8 -14.8 M 11.3 11.3 L 14.8 14.8" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+          </g>
+        </svg>`;
+      case 5:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-pendingin">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4, 4" opacity="0.5" />
+          <g class="anim-fan-spin" style="transform-origin: 40px 40px;">
+            <circle cx="40" cy="40" r="6" fill="#cbd5e1" stroke="#ffffff" stroke-width="1.5" />
+            <path d="M 38 34 C 34 22 46 22 42 34 Z" fill="#22c55e" stroke="#ffffff" stroke-width="1" />
+            <path d="M 40 40 L 46 38 C 58 34 58 46 46 42 Z" fill="#22c55e" stroke="#ffffff" stroke-width="1" />
+            <path d="M 40 40 L 42 46 C 46 58 34 58 38 46 Z" fill="#22c55e" stroke="#ffffff" stroke-width="1" />
+            <path d="M 40 40 L 34 42 C 22 46 22 34 34 38 Z" fill="#22c55e" stroke="#ffffff" stroke-width="1" />
+          </g>
+        </svg>`;
+      case 6:
+        return `<svg width="70" height="70" viewBox="0 0 80 80" class="svg-lib-icon lib-bodi">
+          <path d="M 20 40 C 20 28 35 20 40 20 L 40 60 C 35 60 20 52 20 40 Z" fill="none" stroke="#f97316" stroke-width="3" />
+          <path d="M 40 32 L 48 32 L 48 48 L 40 48" fill="none" stroke="#f97316" stroke-width="2.5" />
+          <g class="anim-light-rays">
+            <line x1="52" y1="28" x2="68" y2="20" stroke="#f97316" stroke-width="3" stroke-linecap="round" />
+            <line x1="56" y1="40" x2="72" y2="40" stroke="#f97316" stroke-width="3.5" stroke-linecap="round" />
+            <line x1="52" y1="52" x2="68" y2="60" stroke="#f97316" stroke-width="3" stroke-linecap="round" />
+          </g>
+        </svg>`;
+      default:
+        return `<div class="library-card-icon">📘</div>`;
+    }
+  },
+
+  /**
+   * Merender perpustakaan referensi materi.
+   */
   renderLibrary() {
     const container = document.querySelector('#screen-library .library-grid') ||
                       document.querySelector('#screen-library .library-content');
@@ -1681,13 +1763,24 @@ const App = {
       const levelId = index + 1;
 
       const card = document.createElement('div');
-      card.className = 'library-card';
+      card.className = `library-card lib-level-${levelId}`;
+
+      const iconSvg = this._getLibraryIconSvg(levelId);
+      const isCompleted = typeof ProgressManager !== 'undefined' && ProgressManager.isLevelCompleted ? ProgressManager.isLevelCompleted(levelId) : false;
+      const completedClass = isCompleted ? 'completed' : '';
 
       card.innerHTML = `
-        <div class="library-card-icon">${level.icon || '📘'}</div>
-        <h3 class="library-card-title">Level ${levelId}: ${level.title || ''}</h3>
+        <div class="library-card-badge">MODUL 0${levelId}</div>
+        <div class="library-card-graphic">${iconSvg}</div>
+        <h3 class="library-card-title">${level.title || ''}</h3>
         <p class="library-card-desc">${level.description || ''}</p>
-        <span class="library-card-slides">${level.learning ? level.learning.length + ' halaman' : 'Belum tersedia'}</span>
+        <div class="library-card-footer">
+          <span class="library-card-pages">📄 ${level.learning ? level.learning.length + ' Halaman' : 'Belum tersedia'}</span>
+          <span class="library-card-status-pill ${completedClass}">${isCompleted ? 'Selesai ✅' : 'Tersedia 🔓'}</span>
+        </div>
+        <div class="library-card-progress-bar">
+          <div class="library-card-progress-fill" style="width: ${isCompleted ? '100%' : '15%'};"></div>
+        </div>
       `;
 
       card.addEventListener('click', () => {

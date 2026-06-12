@@ -4608,6 +4608,442 @@ body.light-theme .welcome-step-card:hover {
   }
 }
 
+/* ============================================================
+   AUTO MASTER UPGRADES: GAMIFIED MAIN MENU & NEON LIBRARY
+   ============================================================ */
+
+/* 1. Dashboard Background Decor & Layout */
+.menu-decor-shape-1, .menu-decor-shape-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.15;
+  transition: all var(--transition-slow);
+}
+body.light-theme .menu-decor-shape-1, body.light-theme .menu-decor-shape-2 {
+  opacity: 0.08;
+}
+.menu-decor-shape-1 {
+  top: -10%;
+  left: -10%;
+  width: 300px;
+  height: 300px;
+  background: var(--clr-primary);
+  animation: float-fluid 12s ease-in-out infinite alternate;
+}
+.menu-decor-shape-2 {
+  bottom: 5%;
+  right: -10%;
+  width: 350px;
+  height: 350px;
+  background: var(--clr-secondary);
+  animation: float-fluid 15s ease-in-out infinite alternate-reverse;
+}
+
+/* 2. Pilot License ID Card & Boost/Tachometer Gauge */
+#player-info {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), var(--shadow-glow-primary) !important;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl) !important;
+  z-index: 2;
+}
+body.light-theme #player-info {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.96) 100%) !important;
+  border: 2px solid rgba(13, 148, 136, 0.15) !important;
+  box-shadow: 0 10px 30px rgba(13, 148, 136, 0.06), var(--shadow-glow-accent) !important;
+}
+
+/* Boost Gauge / Tachometer Ticks */
+.xp-bar {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  height: 14px !important;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+body.light-theme .xp-bar {
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.xp-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: linear-gradient(90deg, transparent 88%, rgba(255, 255, 255, 0.25) 88%);
+  background-size: 8% 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+body.light-theme .xp-bar::before {
+  background-image: linear-gradient(90deg, transparent 88%, rgba(15, 23, 42, 0.12) 88%);
+}
+.xp-bar-fill {
+  background: linear-gradient(90deg, var(--clr-primary) 0%, var(--clr-primary-light) 60%, var(--clr-success) 100%) !important;
+  box-shadow: 0 0 12px var(--clr-primary);
+}
+
+/* 3. Sleek Menu Cards with Neon Glow & 3D Tilt */
+.menu-grid {
+  perspective: 800px;
+  z-index: 2;
+  position: relative;
+}
+
+.menu-card {
+  transform-style: preserve-3d;
+  transition: transform var(--transition-spring), box-shadow var(--transition-spring), border-color var(--transition-fast) !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+/* Card 1: Peta Bengkel (Neon Orange) */
+.menu-card:nth-child(1) {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
+}
+/* Card 2: Perpustakaan (Neon Teal) */
+.menu-card:nth-child(2) {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
+}
+/* Card 3: Papan Skor (Neon Gold) */
+.menu-card:nth-child(3) {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(234, 179, 8, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
+}
+/* Card 4: Pengaturan (Neon Slate) */
+.menu-card:nth-child(4) {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(100, 116, 139, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Light Theme tweaks to keep it vibrant & readable */
+body.light-theme .menu-card:nth-child(1) { background: linear-gradient(135deg, #ff7e39 0%, #ea580c 100%) !important; }
+body.light-theme .menu-card:nth-child(2) { background: linear-gradient(135deg, #0f9f92 0%, #0d9488 100%) !important; }
+body.light-theme .menu-card:nth-child(3) { background: linear-gradient(135deg, #f5bd1f 0%, #ca8a04 100%) !important; }
+body.light-theme .menu-card:nth-child(4) { background: linear-gradient(135deg, #78889b 0%, #475569 100%) !important; }
+
+/* Menu Card Contents Styling */
+.menu-card .menu-card-title {
+  color: #ffffff !important;
+  font-size: 1.18rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  margin-top: var(--sp-xs);
+}
+.menu-card .menu-card-desc {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.76rem !important;
+  line-height: 1.35;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.menu-card-icon {
+  background: transparent !important; /* overrides standard backgrounds */
+  width: auto !important;
+  height: 80px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0px !important;
+}
+
+/* Menu Card Badges */
+.menu-card-badge {
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff !important;
+}
+.menu-card-badge.red { background: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.4); }
+.menu-card-badge.teal { background: #00838f; box-shadow: 0 0 10px rgba(0, 131, 143, 0.4); }
+.menu-card-badge.gold { background: #b45309; box-shadow: 0 0 10px rgba(180, 83, 9, 0.4); }
+.menu-card-badge.slate { background: #334155; box-shadow: 0 0 10px rgba(51, 65, 85, 0.4); }
+
+/* Hover States for Menu Cards */
+.menu-card:hover {
+  transform: perspective(800px) rotateX(6deg) rotateY(-4deg) translateY(-8px) scale(1.03) !important;
+}
+.menu-card:nth-child(1):hover {
+  box-shadow: 0 16px 36px rgba(249, 115, 22, 0.5), 0 0 15px rgba(249, 115, 22, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.menu-card:nth-child(2):hover {
+  box-shadow: 0 16px 36px rgba(13, 148, 136, 0.5), 0 0 15px rgba(13, 148, 136, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.menu-card:nth-child(3):hover {
+  box-shadow: 0 16px 36px rgba(234, 179, 8, 0.5), 0 0 15px rgba(234, 179, 8, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.menu-card:nth-child(4):hover {
+  box-shadow: 0 16px 36px rgba(100, 116, 139, 0.5), 0 0 15px rgba(100, 116, 139, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Shimmer Light Sweeping Effect on Hover */
+.menu-card::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 30%; height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: rotate(30deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: none;
+}
+.menu-card:hover::after {
+  left: 150%;
+  transition: all 0.75s ease-in-out;
+  opacity: 1;
+}
+
+/* Dashboard SVG Keyframes */
+.anim-bounce-pin { animation: bounce-pin 2s ease-in-out infinite; }
+.anim-trophy-star { animation: trophy-star-glow 2.5s ease-in-out infinite; }
+.anim-gear-cw { animation: spin-clockwise 8s linear infinite; }
+.anim-gear-ccw { animation: spin-counter-clockwise 6s linear infinite; }
+
+@keyframes bounce-pin {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes trophy-star-glow {
+  0%, 100% { transform: translate(30px, 10px) scale(1) rotate(0deg); filter: drop-shadow(0 0 2px #ffc300); }
+  50% { transform: translate(30px, 10px) scale(1.25) rotate(15deg); filter: drop-shadow(0 0 8px #ffc300); }
+}
+
+
+/* 4. Gamified Library Cards (Blueprint Folders / Cartridges) */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: var(--sp-lg) !important;
+  padding: var(--sp-lg) !important;
+  perspective: 1000px;
+}
+
+.library-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  padding: var(--sp-xl) var(--sp-lg) var(--sp-lg) var(--sp-lg) !important;
+  position: relative;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-sm) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2) !important;
+  transition: all var(--transition-spring) !important;
+  transform-style: preserve-3d;
+  text-align: center;
+}
+
+/* Light Theme Overrides for Library Cards */
+body.light-theme .library-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 245, 249, 0.98) 100%) !important;
+  border: 2px solid rgba(13, 148, 136, 0.15) !important;
+  box-shadow: 0 10px 20px rgba(13, 148, 136, 0.04) !important;
+}
+
+/* Level Borders & Hover Shadows */
+.library-card.lib-level-1 { border-color: rgba(239, 68, 68, 0.3) !important; }
+.library-card.lib-level-2 { border-color: rgba(14, 165, 233, 0.3) !important; }
+.library-card.lib-level-3 { border-color: rgba(234, 179, 8, 0.3) !important; }
+.library-card.lib-level-4 { border-color: rgba(168, 85, 247, 0.3) !important; }
+.library-card.lib-level-5 { border-color: rgba(34, 197, 94, 0.3) !important; }
+.library-card.lib-level-6 { border-color: rgba(249, 115, 22, 0.3) !important; }
+
+body.light-theme .library-card.lib-level-1 { border-color: rgba(239, 68, 68, 0.25) !important; }
+body.light-theme .library-card.lib-level-2 { border-color: rgba(14, 165, 233, 0.25) !important; }
+body.light-theme .library-card.lib-level-3 { border-color: rgba(234, 179, 8, 0.25) !important; }
+body.light-theme .library-card.lib-level-4 { border-color: rgba(168, 85, 247, 0.25) !important; }
+body.light-theme .library-card.lib-level-5 { border-color: rgba(34, 197, 94, 0.25) !important; }
+body.light-theme .library-card.lib-level-6 { border-color: rgba(249, 115, 22, 0.25) !important; }
+
+/* Library Hover States */
+.library-card:hover {
+  transform: perspective(1000px) rotateY(6deg) translateY(-6px) scale(1.02) !important;
+}
+.library-card.lib-level-1:hover { box-shadow: 0 18px 36px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.15) !important; }
+.library-card.lib-level-2:hover { box-shadow: 0 18px 36px rgba(14, 165, 233, 0.25), 0 0 15px rgba(14, 165, 233, 0.15) !important; }
+.library-card.lib-level-3:hover { box-shadow: 0 18px 36px rgba(234, 179, 8, 0.25), 0 0 15px rgba(234, 179, 8, 0.15) !important; }
+.library-card.lib-level-4:hover { box-shadow: 0 18px 36px rgba(168, 85, 247, 0.25), 0 0 15px rgba(168, 85, 247, 0.15) !important; }
+.library-card.lib-level-5:hover { box-shadow: 0 18px 36px rgba(34, 197, 94, 0.25), 0 0 15px rgba(34, 197, 94, 0.15) !important; }
+.library-card.lib-level-6:hover { box-shadow: 0 18px 36px rgba(249, 115, 22, 0.25), 0 0 15px rgba(249, 115, 22, 0.15) !important; }
+
+body.light-theme .library-card:hover {
+  box-shadow: 0 18px 30px rgba(13, 148, 136, 0.1) !important;
+}
+
+/* Card Badge */
+.library-card-badge {
+  position: absolute;
+  top: 14px; left: 16px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+}
+body.light-theme .library-card-badge {
+  color: var(--text-secondary);
+}
+
+.library-card-graphic {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--sp-xs);
+}
+
+.library-card-title {
+  font-size: 1.18rem !important;
+  font-weight: 850 !important;
+  color: var(--text-primary);
+  margin-bottom: 0px !important;
+}
+
+.library-card-desc {
+  font-size: 0.78rem !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.4 !important;
+  margin-bottom: var(--sp-sm) !important;
+  flex: 1;
+}
+
+.library-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: var(--sp-sm);
+  font-size: 0.78rem;
+}
+body.light-theme .library-card-footer {
+  border-top-color: rgba(0, 0, 0, 0.05);
+}
+
+.library-card-pages {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.library-card-status-pill {
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+body.light-theme .library-card-status-pill {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+.library-card-status-pill.completed {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--clr-success-light);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+body.light-theme .library-card-status-pill.completed {
+  background: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+  border-color: rgba(34, 197, 94, 0.15);
+}
+
+/* Completion mini progress bars */
+.library-card-progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 4px;
+}
+body.light-theme .library-card-progress-bar {
+  background: #e2e8f0;
+}
+.library-card-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+.library-card.lib-level-1 .library-card-progress-fill { background: #ef4444; }
+.library-card.lib-level-2 .library-card-progress-fill { background: #0ea5e9; }
+.library-card.lib-level-3 .library-card-progress-fill { background: #eab308; }
+.library-card.lib-level-4 .library-card-progress-fill { background: #a855f7; }
+.library-card.lib-level-5 .library-card-progress-fill { background: #22c55e; }
+.library-card.lib-level-6 .library-card-progress-fill { background: #f97316; }
+
+/* Library SVGs Keyframe Animations */
+.anim-piston-move { animation: piston-sliding 2s ease-in-out infinite; }
+.anim-conrod-move { animation: conrod-swing 2s ease-in-out infinite; }
+.anim-spark-flash { animation: spark-flash-pulse 2s steps(1) infinite; }
+
+@keyframes piston-sliding {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(14px); }
+}
+@keyframes conrod-swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-8deg); }
+}
+@keyframes spark-flash-pulse {
+  0%, 48%, 52%, 100% { opacity: 0; }
+  49%, 51% { opacity: 1; filter: drop-shadow(0 0 6px #ffc300); }
+}
+
+.anim-rotor-spin { animation: spin-clockwise 4s linear infinite; }
+.anim-caliper-clamp { animation: caliper-clamp-shake 2s ease-in-out infinite; }
+@keyframes caliper-clamp-shake {
+  0%, 90%, 100% { transform: scale(1); }
+  93% { transform: scale(0.96) rotate(-1deg); }
+  96% { transform: scale(1.02) rotate(1deg); }
+}
+
+.anim-lightning { animation: lightning-glow 2.5s ease-in-out infinite; }
+@keyframes lightning-glow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 1px #eab308); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 10px #eab308); }
+}
+
+.anim-fan-spin { animation: spin-clockwise 2s linear infinite; }
+.anim-gear-cw-slow { animation: spin-clockwise 10s linear infinite; }
+.anim-gear-ccw-slow { animation: spin-counter-clockwise 8s linear infinite; }
+
+.anim-light-rays line { animation: ray-glow 1.5s ease-in-out infinite alternate; }
+.anim-light-rays line:nth-child(2) { animation-delay: 0.3s; }
+.anim-light-rays line:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes ray-glow {
+  from { opacity: 0.3; stroke-width: 2.5px; }
+  to { opacity: 1; stroke-width: 4px; filter: drop-shadow(0 0 5px #f97316); }
+}
+
+
 
 
 

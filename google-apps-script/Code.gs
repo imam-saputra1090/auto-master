@@ -699,8 +699,46 @@ function handleGetStudents_(params) {
   return makeResponse_(true, "Data siswa berhasil dimuat", {
     totalStudents: students.length,
     filter: kelasFilter || "all",
-    students: students
+    students: students,
+    recentSessions: getRecentSessions_()
   });
+}
+
+/**
+ * Get the last 20 sessions for the teacher monitor
+ */
+function getRecentSessions_() {
+  var sessionsSheet;
+  try {
+    sessionsSheet = getSheet_("sessions");
+  } catch (e) {
+    return [];
+  }
+  
+  var data = sessionsSheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  
+  // Create NIS to Name map
+  var usersSheet = getSheet_("users");
+  var usersData = usersSheet.getDataRange().getValues();
+  var nisToName = {};
+  for (var u = 1; u < usersData.length; u++) {
+    nisToName[parseNis_(usersData[u][0])] = String(usersData[u][1]).trim();
+  }
+  
+  var sessions = [];
+  var start = Math.max(1, data.length - 20);
+  for (var i = data.length - 1; i >= start; i--) {
+    var nis = parseNis_(data[i][0]);
+    sessions.push({
+      nis: nis,
+      nama: nisToName[nis] || "Mekanik (" + nis + ")",
+      loginTime: String(data[i][1]),
+      device: String(data[i][2]),
+      userAgent: String(data[i][3])
+    });
+  }
+  return sessions;
 }
 
 // ===================== HELPER FUNCTIONS =====================
@@ -760,22 +798,28 @@ function findUserByNIS_(sheet, nis) {
 /**
  * Find a score row by NIS + Level + Phase
  */
+/**
+ * Find a score row in the scores sheet.
+ * Normalizes NIS, level, and phase for robust matching.
+ */
 function findScoreRow_(sheet, nis, level, phase) {
   var data = sheet.getDataRange().getValues();
   var nisStr = parseNis_(nis);
-  var levelStr = String(level).trim();
-  var phaseStr = String(phase).trim();
+  var levelStr = parseLevel_(level);
+  var phaseStr = String(phase || "").toLowerCase().trim();
   
   for (var i = 1; i < data.length; i++) {
-    if (parseNis_(data[i][0]) === nisStr &&
-        String(data[i][2]).trim() === levelStr &&
-        String(data[i][3]).trim() === phaseStr) {
+    var rowNis = parseNis_(data[i][0]);
+    var rowLevel = parseLevel_(data[i][2]);
+    var rowPhase = String(data[i][3] || "").toLowerCase().trim();
+    
+    if (rowNis === nisStr && rowLevel === levelStr && rowPhase === phaseStr) {
       return {
         rowNumber: i + 1,
-        nis: parseNis_(data[i][0]),
+        nis: rowNis,
         nama: String(data[i][1]).trim(),
-        level: String(data[i][2]).trim(),
-        phase: String(data[i][3]).trim(),
+        level: rowLevel,
+        phase: rowPhase,
         score: Number(data[i][4]) || 0,
         stars: Number(data[i][5]) || 0,
         xp: Number(data[i][6]) || 0,
@@ -795,7 +839,7 @@ function getProgressSummary_(nis) {
   try {
     scoresSheet = getSheet_("scores");
   } catch (e) {
-    return { totalScore: 0, totalStars: 0, totalXP: 0, levelsCompleted: 0 };
+    return { totalScore: 0, totalStars: 0, totalXP: 0, levelsCompleted: 0, completedLevels: [] };
   }
   
   var data = scoresSheet.getDataRange().getValues();
@@ -810,16 +854,36 @@ function getProgressSummary_(nis) {
       totalScore += Number(data[i][4]) || 0;
       totalStars += Number(data[i][5]) || 0;
       totalXP += Number(data[i][6]) || 0;
-      levels[String(data[i][2])] = true;
+      
+      var lvl = parseLevel_(data[i][2]);
+      var phase = String(data[i][3] || "").toLowerCase().trim();
+      if (phase === "quiz") {
+        levels[lvl] = true;
+      }
     }
   }
+  
+  var completedLevelsArr = Object.keys(levels);
   
   return {
     totalScore: totalScore,
     totalStars: totalStars,
     totalXP: totalXP,
-    levelsCompleted: Object.keys(levels).length
+    levelsCompleted: completedLevelsArr.length,
+    completedLevels: completedLevelsArr
   };
+}
+
+/**
+ * Parse Level to a clean numeric string (strips decimals, non-digits)
+ */
+function parseLevel_(val) {
+  if (val === null || val === undefined) return "";
+  var str = String(val).trim();
+  if (str.indexOf('.') !== -1) {
+    str = str.split('.')[0];
+  }
+  return str.replace(/\D/g, "");
 }
 
 /**
