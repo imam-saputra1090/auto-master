@@ -34,8 +34,7 @@ const GAME_DATA = {
       ],
 
       // -----------------------------------------------------------------
-      // LEARNING SLIDES
-      // ---------------------------------------------------------      learning: [
+      learning: [
         {
           title: "K3 & Alat Pelindung Diri (APD)",
           content: "<h3>Prinsip Keselamatan dan Kesehatan Kerja (K3)</h3><p>Keselamatan dan Kesehatan Kerja (K3) adalah prioritas nomor satu di bengkel otomotif. Tujuannya adalah melindungi diri dari kecelakaan kerja dan menjaga kesehatan lingkungan kerja.</p><h3>Alat Pelindung Diri (APD) Wajib</h3><ul><li><strong>Pakaian Kerja (Wearpack)</strong> — melindungi tubuh dari kotoran, percikan api, dan gesekan benda tajam.</li><li><strong>Sepatu Safety (Safety Shoes)</strong> — memiliki pelindung besi di ujung untuk melindungi kaki dari kejatuhan alat berat dan mencegah terpeleset oleh oli.</li><li><strong>Kacamata Pelindung (Safety Glasses)</strong> — melindungi mata dari percikan cairan kimia, debu rem, atau gram besi.</li><li><strong>Sarung Tangan</strong> — melindungi tangan dari suhu panas atau zat kimia korosif (minyak rem/asam baterai).</li><li><strong>Masker</strong> — menyaring debu rem atau gas CO beracun.</li></ul><h3>Potensi Bahaya di Bengkel</h3><ul><li><strong>Kebakaran</strong> — akibat hubungan pendek sirkuit kelistrikan atau tumpahan BBM dekat percikan api.</li><li><strong>Luka Bakar</strong> — dari knalpot panas, cairan pendingin radiator panas, atau percikan las.</li><li><strong>Keracunan Gas</strong> — gas buang mesin (karbon monoksida) di area tertutup.</li><li><strong>Cedera Fisik</strong> — kejatuhan benda berat atau tergelincir tumpahan oli.</li></ul>",
