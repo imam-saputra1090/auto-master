@@ -577,21 +577,21 @@ const App = {
 
     // Toggle Guru/Siswa Login Form
     const linkTeacher = document.getElementById('link-to-teacher-login');
-    const formLogin = document.getElementById('form-login');
+    const studentLoginForm = document.getElementById('form-login');
     const formTeacher = document.getElementById('form-teacher-login');
     const loginCard = document.querySelector('#screen-login .auth-card');
     const loginHeading = loginCard ? loginCard.querySelector('h2') : null;
     
-    if (linkTeacher && formLogin && formTeacher) {
+    if (linkTeacher && studentLoginForm && formTeacher) {
       linkTeacher.addEventListener('click', () => {
         if (formTeacher.style.display === 'none') {
           formTeacher.style.display = 'block';
-          formLogin.style.display = 'none';
+          studentLoginForm.style.display = 'none';
           linkTeacher.textContent = 'Masuk sebagai Siswa 🧑‍🔧';
           if (loginHeading) loginHeading.textContent = 'Area Guru 🧑‍🏫';
         } else {
           formTeacher.style.display = 'none';
-          formLogin.style.display = 'block';
+          studentLoginForm.style.display = 'block';
           linkTeacher.textContent = 'Masuk sebagai Guru 🧑‍🏫';
           if (loginHeading) loginHeading.textContent = 'Masuk Mekanik';
         }
