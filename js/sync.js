@@ -252,6 +252,7 @@ const SyncManager = {
       }
 
       const lvl = merged.levels[levelId];
+      lvl.unlocked = true; // Auto unlock if there is server progress/score for this level
       const phase = (entry.phase || '').toLowerCase().trim();
 
       if (phase === 'learn') {
