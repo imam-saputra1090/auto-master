@@ -73,6 +73,7 @@
        APP CONTAINER
        ═══════════════════════════════════════════════════════ -->
   <div id="app">
+    <div class="fluid-bg-left"></div>
 
     <!-- ─────────────────────────────────────────────────────
          SCREEN 0 — LOGIN
@@ -1286,6 +1287,29 @@
         <div class="toast-title">Pencapaian Baru!</div>
         <div class="toast-message">Kamu mendapatkan badge "Langkah Pertama"</div>
       </div>
+    <!-- ─────────────────────────────────────────────────────
+         GLOBAL BOTTOM NAVIGATION BAR
+         ───────────────────────────────────────────────────── -->
+    <div id="global-bottom-nav" class="bottom-nav-bar" style="display: none;">
+      <button class="nav-item" data-screen="menu" type="button" aria-label="Beranda">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Beranda</span>
+      </button>
+      <button class="nav-item" data-screen="scores" type="button" aria-label="Papan Skor">
+        <span class="nav-icon">🏆</span>
+        <span class="nav-label">Peringkat</span>
+      </button>
+      <button class="nav-item center-btn" data-screen="map" type="button" aria-label="Peta Bengkel">
+        <span class="nav-icon">⚙️</span>
+      </button>
+      <button class="nav-item" data-screen="library" type="button" aria-label="Perpustakaan">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Pustaka</span>
+      </button>
+      <button class="nav-item" data-screen="settings" type="button" aria-label="Pengaturan">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profil</span>
+      </button>
     </div>
 
   </div><!-- /#app -->
