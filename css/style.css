@@ -2966,6 +2966,14 @@ a:hover { color: var(--clr-accent-light); }
    ══════════════════════════════════════════════════════════════ */
 
 /* Auth Screen Wrapper */
+#screen-login, #screen-register {
+  background-color: #0a0e17 !important;
+}
+
+#screen-login .auth-container, #screen-register .auth-container {
+  background: radial-gradient(circle at center, #1e293b 0%, #0a0e17 100%) !important;
+}
+
 .auth-container {
   display: flex;
   flex-direction: column;
@@ -3237,7 +3245,7 @@ body.light-theme {
   --text-primary:       #1f2937; /* Dark gray for main text */
   --text-secondary:     #4b5563; /* Medium gray for descriptions */
   --text-muted:         #9ca3af; /* Soft gray for muted texts */
-  --text-dark:          #f9fafb; /* Light text for buttons on dark background */
+  --text-dark:          #0f172a; /* Dark text for inputs and actions in light mode */
 
   --glass-bg:           rgba(255, 255, 255, 0.8);
   --glass-border:       rgba(0, 0, 0, 0.1);
