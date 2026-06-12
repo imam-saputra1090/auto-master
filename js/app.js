@@ -193,6 +193,14 @@ const App = {
       });
     }
 
+    // Forgot Password Link Click
+    this._bindClick('link-forgot-password', () => {
+      this._showAlertDialog(
+        'Lupa Password? 🔑',
+        'Untuk keamanan akun Anda, silakan hubungi Pak <strong>Imam Saputra, S.T.</strong> selaku Guru Pengampu di kelas untuk mereset password Anda.<br><br>Guru Anda cukup mengetikkan password baru sementara di spreadsheet database, dan password tersebut akan otomatis terenkripsi saat Anda masuk pertama kali.'
+      );
+    });
+
     // Form Register Submit
     const formRegister = document.getElementById('form-register');
     if (formRegister) {
@@ -1909,6 +1917,39 @@ const App = {
       if (e.target === overlay) {
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 300);
+      }
+    });
+  },
+
+  /**
+   * Menampilkan dialog alert sederhana.
+   */
+  _showAlertDialog(title, message) {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-dialog-overlay';
+    overlay.innerHTML = `
+      <div class="confirm-dialog" style="max-width: 400px; text-align: center;">
+        <h3 style="margin-bottom: 12px; font-family: var(--ff-heading); color: var(--clr-primary); font-size: 1.25rem;">${title}</h3>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; text-align: left;">${message}</p>
+        <div class="confirm-dialog-buttons" style="justify-content: center;">
+          <button class="btn btn-primary" id="alert-ok" style="padding: 8px 30px; font-size: 0.85rem;">Siap, Mengerti! 👍</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(() => overlay.classList.add('active'));
+
+    const closeAlert = () => {
+      overlay.classList.remove('active');
+      setTimeout(() => overlay.remove(), 300);
+    };
+
+    overlay.querySelector('#alert-ok').addEventListener('click', closeAlert);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeAlert();
       }
     });
   },
